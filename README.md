@@ -38,15 +38,15 @@ Maven
 
 ```xml
 <dependency>
-    <groupId>cz.jirutka.validation</groupId>
+    <groupId>cz.jirutka.validator</groupId>
     <artifactId>validator-collection</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
 
 <repository>
-    <id>cvut-libs-release-local</id>
-    <name>CVUT Release Repository</name>
-    <url>http://repository.fit.cvut.cz/maven/libs-release-local/</url>
+    <id>cvut-local-repos</id>
+    <name>CVUT Repository Local</name>
+    <url>http://repository.fit.cvut.cz/maven/local-repos/</url>
 </repository>
 ```
 
