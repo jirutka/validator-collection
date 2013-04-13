@@ -1,5 +1,5 @@
-JSR-303 Collection Validators
-=============================
+JSR-303 Collection Validators [![Build Status](https://travis-ci.org/jirutka/validator-collection.png)](https://travis-ci.org/jirutka/validator-collection)
+============================= 
 
 Neither JSR-303 nor Hibernate Validator has any constraint that can validate
 each element of Collection containing simple types like String, Integer etc.
