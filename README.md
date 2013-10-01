@@ -1,4 +1,4 @@
-JSR-303 Collection Validators [![Build Status](https://travis-ci.org/jirutka/validator-collection.png)](https://travis-ci.org/jirutka/validator-collection)
+JSR-303 Collection Validators [![Build Status](https://travis-ci.org/jirutka/validator-collection.png)](https://travis-ci.org/jirutka/validator-collection) [![Coverage Status](https://coveralls.io/repos/jirutka/validator-collection/badge.png)](https://coveralls.io/r/jirutka/validator-collection)
 ============================= 
 
 Neither JSR-303 nor Hibernate Validator has any constraint that can validate
