@@ -33,6 +33,15 @@ public @interface EachYourConstraint {
 … and that’s all!
 
 
+Hibernate Validator 4.x vs. 5.x
+-------------------------------
+
+This code uses some internal classes of [Hibernate Validator](http://www.hibernate.org/subprojects/validator.html), the reference implementation of [JSR 349](http://beanvalidation.org/1.1/) (formerly [JSR 303](http://beanvalidation.org/1.0/)). Unfortunately, Hibernate has changed some internal APIs between versions 4.x and 5.x, therefore there are currently two main branches of this library:
+
+*  [branch 1.x](https://github.com/jirutka/validator-collection/tree/1.x) for Hibernate Validator 4.x
+*  [branch 2.x](https://github.com/jirutka/validator-collection/tree/2.x) for Hibernate Validator 5.x
+
+
 Maven
 -----
 
