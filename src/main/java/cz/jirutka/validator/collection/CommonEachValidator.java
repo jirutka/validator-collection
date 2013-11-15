@@ -108,7 +108,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
 
                 if (! validator.isValid(element, context)) {
                     LOG.debug("Element [{}] = '{}' is invalid according to: {}",
-                            new Object[]{index, element, validator.getClass().getName()});
+                            index, element, validator.getClass().getName());
 
                     String message = createMessage(descriptor, element);
                     context.buildConstraintViolationWithTemplate(message)
@@ -129,8 +129,21 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         return ReflectionUtils.invokeArrayGetter("value", Annotation.class, wrapper);
     }
 
+    /**
+     * Note: The <tt>member</tt> argument of the {@link ConstraintDescriptorImpl} constructor is
+     * set to <tt>null</tt>, which may cause problems in some specific situations.
+     *
+     * <p>The problem is that it's not possible to access the validated "member" (field, method,
+     * constructor) from the validator context (or just don't know how). However, this "member"
+     * argument is currently (HV v5.0.1) used only to determine type of the constraint in some
+     * ambiguous situations (see {@link ConstraintDescriptorImpl#determineConstraintType}).
+     * It seems that it's not necessary for "normal" validators and everything works fine. But to
+     * be honest, I'm not sure which specific types of validators will fail with this.</p>
+     *
+     * @param constraint The constraint annotation to create descriptor for.
+     */
     protected ConstraintDescriptor createConstraintDescriptor(Annotation constraint) {
-        return new ConstraintDescriptorImpl(constraint, CONSTRAINT_HELPER, ElementType.LOCAL_VARIABLE, ConstraintOrigin.DEFINED_LOCALLY);
+        return new ConstraintDescriptorImpl(null, constraint, CONSTRAINT_HELPER, ElementType.LOCAL_VARIABLE, ConstraintOrigin.DEFINED_LOCALLY);
     }
 
     protected <T extends ConstraintValidator<?, ?>>
@@ -190,7 +203,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
     }
 
     protected String createMessage(ConstraintDescriptor descriptor, Object value) {
-        Context context = new MessageInterpolatorContext(descriptor, value);
+        Context context = new MessageInterpolatorContext(descriptor, value, Void.class);
         String template = readMessageTemplate(descriptor.getAnnotation());
 
         return factory.getMessageInterpolator().interpolate(template, context);
