@@ -23,18 +23,20 @@
  */
 package cz.jirutka.validator.collection.constraints;
 
-import cz.jirutka.validator.collection.CommonEachValidator;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import javax.validation.constraints.Size;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import javax.validation.constraints.Size;
+
+import cz.jirutka.validator.collection.CommonEachValidator;
 
 /**
  * @see Size
@@ -42,12 +44,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Documented
 @Retention(RUNTIME)
-@Target({METHOD, FIELD})
+@Target({ METHOD, FIELD, TYPE })
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachSize {
 
     String message() default "";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 
     Size[] value();
