@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,8 +32,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
@@ -42,7 +41,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Documented
 @Retention(RUNTIME)
-@Target({METHOD, FIELD})
+@Target({METHOD, FIELD, TYPE})
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachFuture {
 
