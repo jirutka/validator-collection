@@ -18,7 +18,7 @@ annotation.
 ```java
 @Documented
 @Retention(RUNTIME)
-@Target({METHOD, FIELD})
+@Target({METHOD, FIELD, TYPE})
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachYourConstraint {
 
@@ -51,7 +51,7 @@ Released versions are available in The Central Repository. Just add this artifac
 <dependency>
     <groupId>cz.jirutka.validator</groupId>
     <artifactId>validator-collection</artifactId>
-    <version>2.0</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 
