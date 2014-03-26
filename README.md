@@ -1,5 +1,6 @@
-JSR-303 Collection Validators [![Build Status](https://travis-ci.org/jirutka/validator-collection.png)](https://travis-ci.org/jirutka/validator-collection) [![Coverage Status](https://coveralls.io/repos/jirutka/validator-collection/badge.png)](https://coveralls.io/r/jirutka/validator-collection)
-============================= 
+JSR-303 Collection Validators
+=============================
+[![Build Status](https://travis-ci.org/jirutka/validator-collection.svg)](https://travis-ci.org/jirutka/validator-collection) [![Coverage Status](http://img.shields.io/coveralls/jirutka/validator-collection.svg)](https://coveralls.io/r/jirutka/validator-collection) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection)
 
 Neither JSR-303 nor Hibernate Validator has any constraint that can validate
 each element of Collection containing simple types like String, Integer etc.
