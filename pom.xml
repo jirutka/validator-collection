@@ -15,11 +15,11 @@
 
     <groupId>cz.jirutka.validator</groupId>
     <artifactId>validator-collection</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>2.0.2</version>
     <packaging>jar</packaging>
 
     <name>validator-collection</name>
-    <description>JSR-303 Collection Validators</description>
+    <description>Universal bean validator for collection of simple types.</description>
     <url>http://github.com/jirutka/validator-collection</url>
     <inceptionYear>2013</inceptionYear>
 
@@ -52,6 +52,11 @@
         <system>travis</system>
         <url>https://travis-ci.org/jirutka/validator-collection</url>
     </ciManagement>
+
+    <issueManagement>
+        <system>github</system>
+        <url>http://github.com/jirutka/validator-collection/issues</url>
+    </issueManagement>
 
 
     <!--//////////////////// DEPENDENCIES ////////////////////-->
