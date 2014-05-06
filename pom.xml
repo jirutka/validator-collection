@@ -6,8 +6,8 @@
 
     <parent>
         <groupId>cz.jirutka.maven</groupId>
-        <artifactId>root-parent</artifactId>
-        <version>1.0</version>
+        <artifactId>groovy-parent</artifactId>
+        <version>1.1.4</version>
     </parent>
 
 
@@ -15,7 +15,7 @@
 
     <groupId>cz.jirutka.validator</groupId>
     <artifactId>validator-collection</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>validator-collection</name>
