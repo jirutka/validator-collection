@@ -64,11 +64,11 @@
             <version>1</version>
         </dependency>
 
-        <!-- JSR-303 Validator -->
+        <!-- JSR-349 Bean Validator -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>5.0.1.Final</version>
+            <version>[5.0.0.Final, 5.0.3.Final]</version>
         </dependency>
 
         <dependency>
