@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,14 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package cz.jirutka.validator.collection;
 
-import java.util.List;
+package cz.jirutka.validator.collection.fixtures;
 
-/**
- * @author Jakub Jirutka <jakub@jirutka.cz>
- */
-public abstract class Mock {
+import cz.jirutka.validator.collection.constraints.EachPattern;
+import cz.jirutka.validator.collection.constraints.EachSize;
 
-    abstract List getList();
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import javax.validation.ReportAsSingleViolation;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@EachSize(@Size(min=2, max=8))
+@EachPattern(@Pattern(regexp="[a-z]+", message="must contain a-z only"))
+@Documented
+@Retention(RUNTIME)
+@Target({ METHOD, FIELD })
+@Constraint(validatedBy = {})
+public @interface EachComposite {
+
+    String message() default "";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
 }

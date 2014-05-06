@@ -143,7 +143,8 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
      * @param constraint The constraint annotation to create descriptor for.
      */
     protected ConstraintDescriptor createConstraintDescriptor(Annotation constraint) {
-        return new ConstraintDescriptorImpl(null, constraint, CONSTRAINT_HELPER, ElementType.LOCAL_VARIABLE, ConstraintOrigin.DEFINED_LOCALLY);
+        return new ConstraintDescriptorImpl(null, constraint, CONSTRAINT_HELPER, ElementType.LOCAL_VARIABLE,
+                ConstraintOrigin.DEFINED_LOCALLY);
     }
 
     protected <T extends ConstraintValidator<?, ?>>
