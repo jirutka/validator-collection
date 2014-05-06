@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.hibernate.validator.internal.engine.MessageInterpolatorContext;
 import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
-import org.hibernate.validator.internal.metadata.core.ConstraintOrigin;
 import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
+import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl.ConstraintType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +46,13 @@ import java.lang.annotation.ElementType;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
 
+import static java.util.Collections.EMPTY_MAP;
+
 /**
  * Common validator for collection constraints that validates each element of
  * the given collection.
- *
- * @author Jakub Jirutka <jakub@jirutka.cz>
  */
+@SuppressWarnings("unchecked")
 public class CommonEachValidator implements ConstraintValidator<Annotation, Collection<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CommonEachValidator.class);
@@ -135,7 +136,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
      *
      * <p>The problem is that it's not possible to access the validated "member" (field, method,
      * constructor) from the validator context (or just don't know how). However, this "member"
-     * argument is currently (HV v5.0.1) used only to determine type of the constraint in some
+     * argument is currently (HV v5.0.1, 5.1.0) used only to determine type of the constraint in some
      * ambiguous situations (see {@link ConstraintDescriptorImpl#determineConstraintType}).
      * It seems that it's not necessary for "normal" validators and everything works fine. But to
      * be honest, I'm not sure which specific types of validators will fail with this.</p>
@@ -143,8 +144,8 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
      * @param constraint The constraint annotation to create descriptor for.
      */
     protected ConstraintDescriptor createConstraintDescriptor(Annotation constraint) {
-        return new ConstraintDescriptorImpl(null, constraint, CONSTRAINT_HELPER, ElementType.LOCAL_VARIABLE,
-                ConstraintOrigin.DEFINED_LOCALLY);
+        return new ConstraintDescriptorImpl(
+                CONSTRAINT_HELPER, null, constraint, ElementType.LOCAL_VARIABLE, ConstraintType.GENERIC);
     }
 
     protected <T extends ConstraintValidator<?, ?>>
@@ -204,7 +205,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
     }
 
     protected String createMessage(ConstraintDescriptor descriptor, Object value) {
-        Context context = new MessageInterpolatorContext(descriptor, value, Void.class);
+        Context context = new MessageInterpolatorContext(descriptor, value, Void.class, EMPTY_MAP);
         String template = readMessageTemplate(descriptor.getAnnotation());
 
         return factory.getMessageInterpolator().interpolate(template, context);
