@@ -1,20 +1,20 @@
-JSR-303 Collection Validators
-=============================
-[![Build Status](https://travis-ci.org/jirutka/validator-collection.svg)](https://travis-ci.org/jirutka/validator-collection) [![Coverage Status](http://img.shields.io/coveralls/jirutka/validator-collection.svg)](https://coveralls.io/r/jirutka/validator-collection) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection)
+Bean Validation / Collection Validators
+=======================================
+[![Build Status](https://travis-ci.org/jirutka/validator-collection.svg?branch=2.x)](https://travis-ci.org/jirutka/validator-collection)
+[![Coverage Status](https://coveralls.io/repos/jirutka/validator-collection/badge.png?branch=2.x)](https://coveralls.io/r/jirutka/validator-collection?branch=2.x)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection)
 
-Neither JSR-303 nor Hibernate Validator has any constraint that can validate
-each element of Collection containing simple types like String, Integer etc.
-I’ve not found any suitable solution so I accepted the challenge...
+Neither JSR-303/349 nor Hibernate Validator has any constraint that can validate each element of Collection containing
+simple types like String, Integer etc. I’ve not found any suitable solution so I accepted the challenge...
 
 ```java
 @EachSize(@Size(min = 5, max = 255))
 List<String> values;
 ```
 
-This library provides “Each” constraint for every JSR-303 constraints and just
-one universal ConstraintValidator class which rules them all! Therefore it’s
-quite easy to add your own constraints, you have to create just Constraint
-annotation.
+This library provides “Each” constraint for every JSR-303 constraints and just one universal
+[Constraint Validator][CommonEachValidator] class which rules them all! Therefore it’s quite easy to add your own
+constraints, you have to create just Constraint annotation.
 
 ```java
 @Documented
@@ -37,7 +37,10 @@ public @interface EachYourConstraint {
 Hibernate Validator 4.x vs. 5.x
 -------------------------------
 
-This code uses some internal classes of [Hibernate Validator](http://www.hibernate.org/subprojects/validator.html), the reference implementation of [JSR 349](http://beanvalidation.org/1.1/) (formerly [JSR 303](http://beanvalidation.org/1.0/)). Unfortunately, Hibernate has changed some internal APIs between versions 4.x and 5.x, therefore there are currently two main branches of this library:
+This code uses some internal classes of [Hibernate Validator](http://www.hibernate.org/subprojects/validator.html), the
+reference implementation of [JSR 349](http://beanvalidation.org/1.1/) (formerly
+[JSR 303](http://beanvalidation.org/1.0/)). Unfortunately, Hibernate has changed some internal APIs between versions 4.x
+and 5.x, therefore there are currently two main branches of this library:
 
 *  [branch 1.x](https://github.com/jirutka/validator-collection/tree/1.x) for Hibernate Validator 4.x
 *  [branch 2.x](https://github.com/jirutka/validator-collection/tree/2.x) for Hibernate Validator 5.x
@@ -74,3 +77,6 @@ License
 -------
 
 This project is licensed under [MIT license](http://opensource.org/licenses/MIT).
+
+
+[CommonEachValidator]: src/main/java/cz/jirutka/validator/collection/CommonEachValidator.java
