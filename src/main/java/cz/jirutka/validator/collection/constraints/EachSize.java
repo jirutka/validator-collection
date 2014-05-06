@@ -41,7 +41,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Documented
 @Retention(RUNTIME)
-@Target({METHOD, FIELD, TYPE})
+@Target({METHOD, FIELD, ANNOTATION_TYPE})
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachSize {
 
