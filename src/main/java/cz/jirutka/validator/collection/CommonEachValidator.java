@@ -23,8 +23,8 @@
  */
 package cz.jirutka.validator.collection;
 
+import cz.jirutka.validator.collection.internal.AnnotationUtils;
 import cz.jirutka.validator.collection.internal.LRUCache;
-import cz.jirutka.validator.collection.internal.ReflectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.hibernate.validator.internal.engine.MessageInterpolatorContext;
@@ -127,7 +127,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
 
 
     protected Annotation[] unwrapConstraints(Annotation wrapper) {
-        return ReflectionUtils.invokeArrayGetter("value", Annotation.class, wrapper);
+        return AnnotationUtils.readAttribute(wrapper, "value", Annotation[].class);
     }
 
     /**
@@ -201,7 +201,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
 
 
     protected String readMessageTemplate(Annotation constraint) {
-        return ReflectionUtils.invokeGetter("message", String.class, constraint);
+        return AnnotationUtils.readAttribute(constraint, "message", String.class);
     }
 
     protected String createMessage(ConstraintDescriptor descriptor, Object value) {

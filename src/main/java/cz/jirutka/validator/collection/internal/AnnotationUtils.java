@@ -25,35 +25,24 @@ package cz.jirutka.validator.collection.internal;
 
 import org.apache.commons.lang3.Validate;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 
-public class ReflectionUtils {
+public abstract class AnnotationUtils {
 
-    public static <T> T[] invokeArrayGetter(String methodName, Class<T> returnType, Object object)
+    @SuppressWarnings("unchecked")
+    public static <T> T readAttribute(Annotation annotation, String name, Class<T> returnType)
             throws IllegalArgumentException, IllegalStateException  {
 
-        Object result = ReflectionUtils.invokeNonArgMethod(methodName, object);
-
-        Validate.isTrue(result.getClass().isArray(),
-                "Method %s should return array", methodName);
-        Validate.isInstanceOf(returnType, ((Object[]) result)[0],
-                "Method %s should return instance of %s[]", methodName, returnType.getSimpleName());
-
-        return (T[]) result;
-    }
-
-    public static <T> T invokeGetter(String methodName, Class<T> returnType, Object object)
-            throws IllegalArgumentException, IllegalStateException  {
-
-        Object result = ReflectionUtils.invokeNonArgMethod(methodName, object);
+        Object result = AnnotationUtils.invokeNonArgMethod(annotation, name);
 
         Validate.isInstanceOf(returnType, result,
-                "Method %s should return instance of %s", methodName, returnType.getSimpleName());
+                "Method %s should return instance of %s", name, returnType.getSimpleName());
 
         return (T) result;
     }
 
-    public static Object invokeNonArgMethod(String methodName, Object object) {
+    private static Object invokeNonArgMethod(Object object, String methodName) {
         Class<?> clazz = object.getClass();
 
         try {
@@ -66,6 +55,4 @@ public class ReflectionUtils {
             throw new IllegalStateException(ex);
         }
     }
-
-    private ReflectionUtils() { }
 }
