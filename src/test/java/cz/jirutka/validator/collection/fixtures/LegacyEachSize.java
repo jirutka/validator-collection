@@ -23,29 +23,27 @@
  */
 package cz.jirutka.validator.collection.fixtures;
 
-import cz.jirutka.validator.collection.constraints.EachPattern;
-import cz.jirutka.validator.collection.constraints.EachSize;
+import cz.jirutka.validator.collection.CommonEachValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@EachSize(min=2, max=8)
-@EachPattern(@Pattern(regexp="[a-z]+", message="must contain a-z only"))
 @Documented
 @Retention(RUNTIME)
-@Target({ METHOD, FIELD })
-@Constraint(validatedBy = {})
-public @interface EachComposite {
+@Target({METHOD, FIELD, ANNOTATION_TYPE})
+@Constraint(validatedBy = CommonEachValidator.class)
+public @interface LegacyEachSize {
 
     String message() default "";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
+
+    Size[] value();
 }

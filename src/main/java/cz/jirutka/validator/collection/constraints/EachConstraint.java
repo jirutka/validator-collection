@@ -21,31 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package cz.jirutka.validator.collection.fixtures;
+package cz.jirutka.validator.collection.constraints;
 
-import cz.jirutka.validator.collection.constraints.EachPattern;
-import cz.jirutka.validator.collection.constraints.EachSize;
-
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import javax.validation.constraints.Pattern;
+import java.lang.annotation.Annotation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@EachSize(min=2, max=8)
-@EachPattern(@Pattern(regexp="[a-z]+", message="must contain a-z only"))
+/**
+ * A meta annotation for a collection pseudo constraint validated by
+ * {@link cz.jirutka.validator.collection.CommonEachValidator CommonEachValidator}.
+ * It's used to specify the actual constraint annotation which validator
+ * should be used to validate the target.
+ */
 @Documented
 @Retention(RUNTIME)
-@Target({ METHOD, FIELD })
-@Constraint(validatedBy = {})
-public @interface EachComposite {
+@Target(ANNOTATION_TYPE)
+public @interface EachConstraint {
 
-    String message() default "";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+    /**
+     * Class of the actual constraint annotation. The target collection's items
+     * will be validated with the validator of this constraint.
+     */
+    Class<? extends Annotation> validateAs();
 }

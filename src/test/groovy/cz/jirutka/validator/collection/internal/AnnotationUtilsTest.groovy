@@ -21,25 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package cz.jirutka.validator.collection.internal
 
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory
+import cz.jirutka.validator.collection.TestUtils
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import javax.validation.constraints.NotNull
+import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 
-import static cz.jirutka.validator.collection.internal.AnnotationUtils.readAttribute
+import static cz.jirutka.validator.collection.internal.AnnotationUtils.*
 
 class AnnotationUtilsTest extends Specification {
 
+
+    //////// readAttribute() ////////
+
     def "readAttribute: return attribute's value"() {
-        setup:
+        given:
             def attrs = value != null ? [(name): value] : [:]
-            def annotation = createAnnotation(Size, attrs)
+            def annotation = TestUtils.createAnnotation(Size, attrs)
         expect:
             readAttribute(annotation, name, reqType) == expected
         where:
@@ -52,7 +54,7 @@ class AnnotationUtilsTest extends Specification {
     @Unroll
     def "readAttribute: throw IllegalArgumentException when attribute #reason"() {
         given:
-            def annotation = createAnnotation(NotNull)
+            def annotation = TestUtils.createAnnotation(NotNull)
         when:
             readAttribute(annotation, attrName, attrType)
         then:
@@ -60,12 +62,76 @@ class AnnotationUtilsTest extends Specification {
         where:
             attrName  | attrType | reason
             'foo'     | String   | "doesn't exist"
-            'message' | Integer  | 'is not instance of required type'
+            'message' | Integer  | "isn't instance of required type"
     }
 
 
-    def createAnnotation(annotationType, attributes=[:]) {
-        def desc = AnnotationDescriptor.getInstance(annotationType, attributes)
-        AnnotationFactory.create(desc)
+    //////// hasAttribute() ////////
+
+    @Unroll
+    def 'hasAttribute: return #expected for #desc attribute'() {
+        expect:
+            hasAttribute(Size, name) == expected
+        where:
+            name      | expected
+            'min'     | true
+            'foo'     | false
+
+            desc = expected ? 'existing' : 'undefined'
+    }
+
+
+    //////// readAllAttributes() ////////
+
+    def 'readAllAttributes: return attributes as map'() {
+        given:
+            def attrs = [message: 'allons-y!', max: 10]
+            def annotation = TestUtils.createAnnotation(Size, attrs)
+            def expected = [groups: [], payload: [], min: 0] + attrs
+        expect:
+            readAllAttributes(annotation) == expected
+    }
+
+
+    //////// createAnnotation() ////////
+
+    def 'createAnnotation: create annotation when given valid attributes'() {
+        given:
+            def attributes = [min: 42, message: 'allons-y!']
+        when:
+            def actual = createAnnotation(Size, attributes)
+        then:
+            actual instanceof Size
+            actual.min()     == attributes['min']
+            actual.message() == attributes['message']
+    }
+
+    @Unroll
+    def 'createAnnotation: create annotation and ignore #desc'() {
+        when:
+            def actual = createAnnotation(Size, attributes)
+        then:
+            actual instanceof Size
+            actual.message() == '{javax.validation.constraints.Size.message}'
+        where:
+            attributes        | desc
+            [undefined: 666]  | 'undefined attribute'
+            [message: null]   | 'attribute with null'
+    }
+
+    def 'createAnnotation: throw IllegalArgumentException when wrong attribute type'() {
+        when:
+            createAnnotation(Size, [min: 'fail'])
+        then:
+            def ex = thrown(IllegalArgumentException)
+            ex.message == "Attribute 'min' expects int, but given: fail (java.lang.String)"
+    }
+
+    def 'createAnnotation: throw IllegalArgumentException when omit required attribute'() {
+        when:
+            createAnnotation(Pattern, [message: 'fail'])
+        then:
+            def ex = thrown(IllegalArgumentException)
+            ex.message == 'Missing required attribute: regexp'
     }
 }

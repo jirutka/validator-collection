@@ -23,13 +23,13 @@
  */
 package cz.jirutka.validator.collection
 
-import cz.jirutka.validator.collection.constraints.EachSize
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory
+import cz.jirutka.validator.collection.fixtures.LegacyEachSize
 import spock.lang.Specification
 
 import javax.validation.constraints.Future
 import javax.validation.constraints.Size
+
+import static cz.jirutka.validator.collection.TestUtils.createAnnotation
 
 // TODO more tests
 class CommonEachValidatorTest extends Specification {
@@ -39,22 +39,16 @@ class CommonEachValidatorTest extends Specification {
     def 'readMessageTemplate'() {
         given:
             def expected = 'Allons-y!'
-            def anno = newAnnotation(Future, message: expected)
+            def anno = createAnnotation(Future, message: expected)
         expect:
             validator.readMessageTemplate(anno) == expected
     }
 
     def 'unwrapConstraints'() {
         given:
-            def expected = [ newAnnotation(Size, min: 10), newAnnotation(Size) ] as Size[]
-            def eachAnno = newAnnotation(EachSize, value: expected)
+            def expected = [ createAnnotation(Size, min: 10), createAnnotation(Size) ] as Size[]
+            def eachAnno = createAnnotation(LegacyEachSize, value: expected)
         expect:
             validator.unwrapConstraints(eachAnno) == expected
-    }
-
-
-    def newAnnotation(Map params=[:], Class annotationClass) {
-        def desc = AnnotationDescriptor.getInstance(annotationClass, params)
-        AnnotationFactory.create(desc)
     }
 }

@@ -42,6 +42,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
+@EachConstraint(validateAs = Size.class)
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachSize {
 
@@ -49,5 +50,13 @@ public @interface EachSize {
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 
-    Size[] value();
+    /**
+     * @return size the element must be higher or equal to
+     */
+    int min() default 0;
+
+    /**
+     * @return size the element must be lower or equal to
+     */
+    int max() default Integer.MAX_VALUE;
 }

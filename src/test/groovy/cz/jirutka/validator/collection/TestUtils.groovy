@@ -21,8 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package cz.jirutka.validator.collection
+
+import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor
+import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory
 
 class TestUtils {
 
@@ -40,5 +42,14 @@ class TestUtils {
             }
         """
         new GroovyClassLoader().parseClass(template).newInstance()
+    }
+
+    static createAnnotation(Class annotationType, Map attributes) {
+        createAnnotation(attributes, annotationType)
+    }
+
+    static createAnnotation(Map attributes=[:], Class annotationType) {
+        def desc = AnnotationDescriptor.getInstance(annotationType, attributes)
+        AnnotationFactory.create(desc)
     }
 }

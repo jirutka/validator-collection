@@ -23,6 +23,7 @@
  */
 package cz.jirutka.validator.collection;
 
+import cz.jirutka.validator.collection.constraints.EachConstraint;
 import cz.jirutka.validator.collection.internal.AnnotationUtils;
 import cz.jirutka.validator.collection.internal.LRUCache;
 import org.apache.commons.lang3.Validate;
@@ -46,7 +47,9 @@ import java.lang.annotation.ElementType;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
 
+import static cz.jirutka.validator.collection.internal.AnnotationUtils.*;
 import static java.util.Collections.EMPTY_MAP;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Common validator for collection constraints that validates each element of
@@ -65,28 +68,42 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
     private Map<Class, ConstraintValidator> validatorInstancesCache;
 
 
+    public void initialize(Annotation eachAnnotation) {
 
-    public void initialize(Annotation wrapper) {
-        LOG.trace("Initializing BaseEachValidator for {}", wrapper.annotationType());
+        Class<? extends Annotation> eachAType = eachAnnotation.annotationType();
+        LOG.trace("Initializing CommonEachValidator for {}", eachAType);
 
         if (factory == null) {
             LOG.debug("No ValidatorFactory injected, building default one");
             factory = Validation.buildDefaultValidatorFactory();
         }
-        Annotation[] constraints = unwrapConstraints(wrapper);
-        Validate.notEmpty(constraints, "Wrapper annotation does not contain any constraint");
 
-        // constraints are always of same type
-        Class<? extends Annotation> constraintClass = constraints[0].annotationType();
+        if (eachAType.isAnnotationPresent(EachConstraint.class)) {
+            Class constraintClass = eachAType.getAnnotation(EachConstraint.class).validateAs();
 
-        descriptors = new ArrayList<>(2);
-        for (Annotation constraint : constraints) {
-            descriptors.add(createConstraintDescriptor(constraint));
+            Annotation constraint = createConstraintAndCopyAttributes(constraintClass, eachAnnotation);
+            descriptors = Arrays.asList(createConstraintDescriptor(constraint));
+
+        // legacy
+        } else if (isWrapperAnnotation(eachAType)) {
+            Annotation[] constraints = unwrapConstraints(eachAnnotation);
+            Validate.notEmpty(constraints, "%s annotation does not contain any constraint", eachAType);
+
+            descriptors = new ArrayList<>(constraints.length);
+            for (Annotation constraint : constraints) {
+                descriptors.add(createConstraintDescriptor(constraint));
+            }
+        } else {
+            throw new IllegalArgumentException(String.format(
+                    "%s is not annotated with @EachConstraint and doesn't declare 'value' of type Annotation[] either.",
+                    eachAType.getName()));
         }
+        // constraints are always of the same type, so just pick first
         ConstraintDescriptor descriptor = descriptors.get(0);
 
         validators = categorizeValidatorsByType(descriptor.getConstraintValidatorClasses());
-        Validate.notEmpty(validators, "No validator found for constraint: %s", constraintClass.getName());
+        Validate.notEmpty(validators,
+                "No validator found for constraint: %s", descriptor.getAnnotation().annotationType());
 
         validatorInstancesCache = new LRUCache<>(1, 6);
     }
@@ -125,6 +142,15 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         this.factory = factory;
     }
 
+
+    /**
+     * Whether the given annotation type contains the {@code value} attribute
+     * of the type that extends {@code Annotation[]}.
+     */
+    protected boolean isWrapperAnnotation(Class<? extends Annotation> annotationType) {
+        return hasAttribute(annotationType, "value")
+                && Annotation[].class.isAssignableFrom(getAttributeType(annotationType, "value"));
+    }
 
     protected Annotation[] unwrapConstraints(Annotation wrapper) {
         return AnnotationUtils.readAttribute(wrapper, "value", Annotation[].class);
@@ -211,4 +237,26 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         return factory.getMessageInterpolator().interpolate(template, context);
     }
 
+    /**
+     * Instantiates constraint of the specified type and copies values of all
+     * the common attributes from the given source constraint (of any type)
+     * to it.
+     *
+     * <p>If the source constraint's {@code message} is empty, then it will
+     * <b>not</b> copy it (so the default {@code message} of the target
+     * constraint will be preserved).</p>
+     *
+     * @param constraintType Type of the constraint to create.
+     * @param source Any annotation to copy attribute values from.
+     * @return An instance of the specified constraint.
+     */
+    protected <T extends Annotation> T createConstraintAndCopyAttributes(Class<T> constraintType, Annotation source) {
+        Map<String, Object> attributes = readAllAttributes(source);
+
+        // if message is not set, keep message from original constraint instead
+        if (isEmpty((String) attributes.get("message"))) {
+            attributes.remove("message");
+        }
+        return createAnnotation(constraintType, attributes);
+    }
 }

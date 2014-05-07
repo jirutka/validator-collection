@@ -38,19 +38,19 @@ class CommonEachValidatorIT extends Specification {
     def constraint = null
 
 
-    def 'validate @Each* on field with actual constraint value with #desc'() {
+    def 'validate @Each* on field with #desc'() {
         given:
-            constraint = '@EachSize(@Size(min=2, max=6))'
+            constraint = '@EachSize(min=2, max=6)'
         expect:
             assertViolations values, isValid, message
         where:
             values       | desc                    || isValid | message
+            ['f', 'ab']  | 'first value invalid'   || false   | 'size must be between 2 and 6'
+            ['ab', '']   | 'last value invalid'    || false   | 'size must be between 2 and 6'
             ['foo']      | 'valid value'           || true    | null
             ['ab', 'cd'] | 'valid values'          || true    | null
             []           | 'empty list'            || true    | null
             null         | 'null'                  || true    | null
-            ['f', 'ab']  | 'first value invalid'   || false   | 'size must be between 2 and 6'
-            ['ab', '']   | 'last value invalid'    || false   | 'size must be between 2 and 6'
     }
 
     def 'validate @Each* used in composite constraint with #desc'() {
@@ -60,9 +60,20 @@ class CommonEachValidatorIT extends Specification {
             assertViolations values, isValid, message
         where:
             values         | desc                        || isValid  | message
-            ['ab', 'cd']   | 'valid values'              || true     | null
             ['f']          | 'value invalid by @Size'    || false    | 'size must be between 2 and 8'
             ['foo', '132'] | 'value invalid by @Pattern' || false    | 'must contain a-z only'
+            ['ab', 'cd']   | 'valid values'              || true     | null
+    }
+
+    def 'validate legacy @Each* on field with #desc'() {
+        given:
+            constraint = '@LegacyEachSize(@Size(min=2, max=6))'
+        expect:
+            assertViolations values, isValid, message
+        where:
+            values       | desc             || isValid | message
+            ['f', 'ab']  | 'invalid value'  || false   | 'size must be between 2 and 6'
+            ['ab', 'cd'] | 'valid values'   || true    | null
     }
 
 
