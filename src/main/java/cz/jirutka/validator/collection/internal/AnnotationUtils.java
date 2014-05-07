@@ -31,13 +31,13 @@ import java.lang.reflect.InvocationTargetException;
 public abstract class AnnotationUtils {
 
     @SuppressWarnings("unchecked")
-    public static <T> T readAttribute(Annotation annotation, String name, Class<T> returnType)
+    public static <T> T readAttribute(Annotation annotation, String name, Class<T> requiredType)
             throws IllegalArgumentException, IllegalStateException  {
 
         Object result = AnnotationUtils.invokeNonArgMethod(annotation, name);
 
-        Validate.isInstanceOf(returnType, result,
-                "Method %s should return instance of %s", name, returnType.getSimpleName());
+        Validate.isInstanceOf(requiredType, result,
+                "Method %s should return instance of %s", name, requiredType.getSimpleName());
 
         return (T) result;
     }

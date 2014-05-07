@@ -28,6 +28,8 @@ import spock.lang.Unroll
 
 import javax.validation.Validation
 
+import static cz.jirutka.validator.collection.TestUtils.evalClassWithConstraint
+
 @Unroll
 class CommonEachValidatorIT extends Specification {
 
@@ -84,21 +86,5 @@ class CommonEachValidatorIT extends Specification {
             assert violations[0].rootBeanClass == entity.class
             assert violations[0].message == expectedMessage
         }
-    }
-
-    def evalClassWithConstraint(annotationLine, List values) {
-        def value = values ? "[ ${values.collect{"'$it'"}.join(',')} ]" : null
-
-        def template = """
-            import cz.jirutka.validator.collection.constraints.*
-            import cz.jirutka.validator.collection.fixtures.*
-            import javax.validation.constraints.*
-
-            class TestMock {
-                ${annotationLine}
-                public List valuesList = $value
-            }
-        """
-        new GroovyClassLoader().parseClass(template).newInstance()
     }
 }
