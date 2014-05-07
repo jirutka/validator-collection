@@ -42,12 +42,32 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
+@EachConstraint(validateAs = DecimalMin.class)
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachDecimalMin {
 
     String message() default "";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
 
-    DecimalMin[] value();
+    Class<?>[] groups() default { };
+
+    Class<? extends Payload>[] payload() default { };
+
+    /**
+     * The {@code String} representation of the min value according to the
+     * {@code BigDecimal} string representation.
+     *
+     * @return value the element must be higher or equal to
+     */
+    String value();
+
+    /**
+     * Specifies whether the specified minimum is inclusive or exclusive.
+     * By default, it is inclusive.
+     *
+     * @return {@code true} if the value must be higher or equal to the specified minimum,
+     *         {@code false} if the value must be higher
+     *
+     * @since 1.1
+     */
+    boolean inclusive() default true;
 }

@@ -28,7 +28,6 @@ import cz.jirutka.validator.collection.constraints.EachSize;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.Pattern;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -38,7 +37,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @EachSize(min=2, max=8)
-@EachPattern(@Pattern(regexp="[a-z]+", message="must contain a-z only"))
+@EachPattern(regexp="[a-z]+", message="must contain a-z only")
 @Documented
 @Retention(RUNTIME)
 @Target({ METHOD, FIELD })

@@ -42,12 +42,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
+@EachConstraint(validateAs = Past.class)
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachPast {
 
     String message() default "";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
 
-    Past[] value() default @Past;
+    Class<?>[] groups() default { };
+
+    Class<? extends Payload>[] payload() default { };
 }

@@ -42,12 +42,18 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
+@EachConstraint(validateAs = Min.class)
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachMin {
 
     String message() default "";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
 
-    Min[] value();
+    Class<?>[] groups() default { };
+
+    Class<? extends Payload>[] payload() default { };
+
+    /**
+     * @return value the element must be higher or equal to
+     */
+    long value();
 }

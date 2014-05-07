@@ -42,12 +42,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
+@EachConstraint(validateAs = Future.class)
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachFuture {
 
     String message() default "";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
 
-    Future[] value() default @Future;
+    Class<?>[] groups() default { };
+
+    Class<? extends Payload>[] payload() default { };
 }

@@ -42,12 +42,23 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
+@EachConstraint(validateAs = Digits.class)
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachDigits {
 
     String message() default "";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
 
-    Digits[] value();
+    Class<?>[] groups() default { };
+
+    Class<? extends Payload>[] payload() default { };
+
+    /**
+     * @return maximum number of integral digits accepted for this number
+     */
+    int integer();
+
+    /**
+     * @return maximum number of fractional digits accepted for this number
+     */
+    int fraction();
 }

@@ -42,12 +42,32 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
+@EachConstraint(validateAs = DecimalMax.class)
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachDecimalMax {
 
     String message() default "";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
 
-    DecimalMax[] value();
+    Class<?>[] groups() default { };
+
+    Class<? extends Payload>[] payload() default { };
+
+    /**
+     * The {@code String} representation of the max value according to the
+     * {@code BigDecimal} string representation.
+     *
+     * @return value the element must be lower or equal to
+     */
+    String value();
+
+    /**
+     * Specifies whether the specified maximum is inclusive or exclusive.
+     * By default, it is inclusive.
+     *
+     * @return {@code true} if the value must be lower or equal to the specified maximum,
+     *         {@code false} if the value must be lower
+     *
+     * @since 1.1
+     */
+    boolean inclusive() default true;
 }

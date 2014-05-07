@@ -28,6 +28,7 @@ import cz.jirutka.validator.collection.CommonEachValidator;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Pattern.Flag;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -42,12 +43,32 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
+@EachConstraint(validateAs = Pattern.class)
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachPattern {
 
-    String message() default "";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+    /**
+     * @return the regular expression to match
+     */
+    String regexp();
 
-    Pattern[] value();
+    /**
+     * @return array of {@code Flag}s considered when resolving the regular expression
+     */
+    Flag[] flags() default { };
+
+    /**
+     * @return the error message template
+     */
+    String message() default "";
+
+    /**
+     * @return the groups the constraint belongs to
+     */
+    Class<?>[] groups() default { };
+
+    /**
+     * @return the payload associated to the constraint
+     */
+    Class<? extends Payload>[] payload() default { };
 }
