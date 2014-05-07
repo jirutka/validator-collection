@@ -21,15 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package cz.jirutka.validator.collection.support;
+package cz.jirutka.validator.collection.internal;
 
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 /**
  * A map that automatically removes least recently used keys.
- *
- * @author Jakub Jirutka <jakub@jirutka.cz>
  */
 public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 

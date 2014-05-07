@@ -21,15 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package cz.jirutka.validator.collection.support;
+package cz.jirutka.validator.collection.internal;
 
 import org.apache.commons.lang3.Validate;
 
 import java.lang.reflect.InvocationTargetException;
 
-/**
- * @author Jakub Jirutka <jakub@jirutka.cz>
- */
 public class ReflectionUtils {
 
     public static <T> T[] invokeArrayGetter(String methodName, Class<T> returnType, Object object)

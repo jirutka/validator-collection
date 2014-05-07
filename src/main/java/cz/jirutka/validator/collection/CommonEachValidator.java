@@ -23,8 +23,8 @@
  */
 package cz.jirutka.validator.collection;
 
-import cz.jirutka.validator.collection.support.LRUCache;
-import cz.jirutka.validator.collection.support.ReflectionUtils;
+import cz.jirutka.validator.collection.internal.LRUCache;
+import cz.jirutka.validator.collection.internal.ReflectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.hibernate.validator.internal.engine.MessageInterpolatorContext;
