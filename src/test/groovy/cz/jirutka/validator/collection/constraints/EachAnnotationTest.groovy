@@ -30,9 +30,14 @@ import spock.lang.Unroll
 class EachAnnotationTest extends Specification {
 
     static final CONSTRAINTS = [
+            // JSR 303/349
             EachAssertFalse, EachAssertTrue, EachDecimalMax, EachDecimalMin,
             EachDigits, EachFuture, EachMax, EachMin, EachNotNull, EachPast,
-            EachPattern, EachSize
+            EachPattern, EachSize,
+            // Hibernate
+            EachCreditCardNumber, EachEAN, EachEmail, EachLength, EachLuhnCheck,
+            EachMod10Check, EachMod11Check, EachNotBlank, EachNotEmpty,
+            EachRange, EachSafeHtml, EachScriptAssert, EachURL
     ]
 
     def 'verify that @#name is annotated with @EachConstraint(validateAs = #expValidateAsName)'() {

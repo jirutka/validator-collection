@@ -10,7 +10,8 @@ validate each element of the collection).
 
 This library allows you to easily create a “pseudo constraint” (typically named as `@EachX`) for _any_ validation
 constraint to annotate a collection of simple types, without writing an extra validator or unnecessary wrapper classes
-for every collection. `EachX` constraint is supported for all standard Bean Validation constraints. For example:
+for every collection. `EachX` constraint is supported for all standard Bean Validation constraints and Hibernate
+specific constraints. For example:
 
 ```java
 @EachSize(min = 5, max = 255)
@@ -18,6 +19,9 @@ Collection<String> values;
 
 @EachFuture
 List<Date> dates;
+
+@EachEmail
+Set<String> emails;
 ```
 
 How to create a custom constraint
