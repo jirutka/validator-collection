@@ -59,6 +59,13 @@
     </issueManagement>
 
 
+    <!--//////////////////// PROPERTIES ////////////////////-->
+
+    <properties>
+        <hibernate-validator.version>[5.1.0.Final,)</hibernate-validator.version>
+    </properties>
+
+
     <!--//////////////////// DEPENDENCIES ////////////////////-->
 
     <dependencies>
@@ -73,7 +80,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>[5.1.0.Final,)</version>
+            <version>${hibernate-validator.version}</version>
         </dependency>
 
         <dependency>
@@ -114,4 +121,13 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>release</id>
+
+            <properties>
+                <hibernate-validator.version>5.1.1.Final</hibernate-validator.version>
+            </properties>
+        </profile>
+    </profiles>
 </project>
