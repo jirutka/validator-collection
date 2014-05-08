@@ -26,22 +26,41 @@ package cz.jirutka.validator.collection
 import cz.jirutka.validator.collection.fixtures.LegacyEachSize
 import spock.lang.Specification
 
-import javax.validation.constraints.Future
+import javax.validation.MessageInterpolator
+import javax.validation.MessageInterpolator.Context
+import javax.validation.ValidatorFactory
+import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
+import javax.validation.metadata.ConstraintDescriptor
 
 import static cz.jirutka.validator.collection.TestUtils.createAnnotation
 
 // TODO more tests
 class CommonEachValidatorTest extends Specification {
 
-    def validator = new CommonEachValidator()
+    def interpolator = Mock(MessageInterpolator)
+    def factory = Stub(ValidatorFactory) {
+        getMessageInterpolator() >> interpolator
+    }
+    def validator = new CommonEachValidator(validatorFactory: factory)
 
-    def 'readMessageTemplate'() {
+
+    def 'createMessage: should extract message template and interpolate it'() {
         given:
-            def expected = 'Allons-y!'
-            def anno = createAnnotation(Future, message: expected)
-        expect:
-            validator.readMessageTemplate(anno) == expected
+            def msgTemplate = 'must match "{regexp}"'
+            def descriptor = Stub(ConstraintDescriptor) {
+                getAnnotation() >> createAnnotation(Pattern, regexp: '[a-z]', message: msgTemplate)
+            }
+            def value = new Object()
+            def expected = 'must match "[a-z]"'
+        when:
+            def actual = validator.createMessage(descriptor, value)
+        then:
+            1 * interpolator.interpolate(msgTemplate, { Context cxt ->
+                cxt.constraintDescriptor == descriptor && cxt.validatedValue == value
+            }) >> expected
+        and:
+            actual == expected
     }
 
     def 'unwrapConstraints'() {

@@ -49,9 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static cz.jirutka.validator.collection.internal.AnnotationUtils.*;
 import static java.util.Arrays.asList;
-import static java.util.Collections.EMPTY_MAP;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.*;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -253,14 +251,19 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         throw new IllegalArgumentException("No validator found for type: " + type.getName());
     }
 
-
-    protected String readMessageTemplate(Annotation constraint) {
-        return AnnotationUtils.readAttribute(constraint, "message", String.class);
-    }
-
+    /**
+     * Reads and interpolates an error message for the given constraint and
+     * value.
+     *
+     * @param descriptor Descriptor of the constraint that the value violated.
+     * @param value The validated value.
+     * @return An interpolated message.
+     */
     protected String createMessage(ConstraintDescriptor descriptor, Object value) {
         Context context = new MessageInterpolatorContext(descriptor, value, Void.class, EMPTY_MAP);
-        String template = readMessageTemplate(descriptor.getAnnotation());
+
+        Annotation constraint = descriptor.getAnnotation();
+        String template = AnnotationUtils.readAttribute(constraint, "message", String.class);
 
         return factory.getMessageInterpolator().interpolate(template, context);
     }
