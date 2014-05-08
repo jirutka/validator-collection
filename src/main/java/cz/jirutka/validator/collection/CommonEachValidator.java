@@ -25,7 +25,6 @@ package cz.jirutka.validator.collection;
 
 import cz.jirutka.validator.collection.constraints.EachConstraint;
 import cz.jirutka.validator.collection.internal.AnnotationUtils;
-import cz.jirutka.validator.collection.internal.LRUCache;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.hibernate.validator.internal.engine.MessageInterpolatorContext;
@@ -46,9 +45,13 @@ import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static cz.jirutka.validator.collection.internal.AnnotationUtils.*;
+import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_MAP;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -61,11 +64,17 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
     private static final Logger LOG = LoggerFactory.getLogger(CommonEachValidator.class);
     private static final ConstraintHelper CONSTRAINT_HELPER = new ConstraintHelper();
 
+    // injected by container, or set default during initialization
     private @Inject ValidatorFactory factory;
 
+    // after initialization it's read-only
     private List<ConstraintDescriptor> descriptors;
+
+    // after initialization it's read-only
     private Map<Class, Class<? extends ConstraintValidator<?, ?>>> validators;
-    private Map<Class, ConstraintValidator> validatorInstancesCache;
+
+    // modifiable after initialization; must be thread-safe!
+    private Map<Class, ConstraintValidator> validatorInstances;
 
 
     public void initialize(Annotation eachAnnotation) {
@@ -77,22 +86,27 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
             LOG.debug("No ValidatorFactory injected, building default one");
             factory = Validation.buildDefaultValidatorFactory();
         }
+        validatorInstances = new ConcurrentHashMap<>(2);
 
         if (eachAType.isAnnotationPresent(EachConstraint.class)) {
             Class constraintClass = eachAType.getAnnotation(EachConstraint.class).validateAs();
 
             Annotation constraint = createConstraintAndCopyAttributes(constraintClass, eachAnnotation);
-            descriptors = Arrays.asList(createConstraintDescriptor(constraint));
+            ConstraintDescriptor descriptor = createConstraintDescriptor(constraint);
+
+            descriptors = unmodifiableList(asList(descriptor));
 
         // legacy
         } else if (isWrapperAnnotation(eachAType)) {
             Annotation[] constraints = unwrapConstraints(eachAnnotation);
             Validate.notEmpty(constraints, "%s annotation does not contain any constraint", eachAType);
 
-            descriptors = new ArrayList<>(constraints.length);
+            List<ConstraintDescriptor> list = new ArrayList<>(constraints.length);
             for (Annotation constraint : constraints) {
-                descriptors.add(createConstraintDescriptor(constraint));
+                list.add( createConstraintDescriptor(constraint) );
             }
+            descriptors = unmodifiableList(list);
+
         } else {
             throw new IllegalArgumentException(String.format(
                     "%s is not annotated with @EachConstraint and doesn't declare 'value' of type Annotation[] either.",
@@ -104,13 +118,11 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         validators = categorizeValidatorsByType(descriptor.getConstraintValidatorClasses());
         Validate.notEmpty(validators,
                 "No validator found for constraint: %s", descriptor.getAnnotation().annotationType());
-
-        validatorInstancesCache = new LRUCache<>(1, 6);
     }
 
     public boolean isValid(Collection<?> collection, ConstraintValidatorContext context) {
         if (collection == null || collection.isEmpty()) {
-            return true;  // nothing for validation here
+            return true;  //nothing to validate here
         }
         context.disableDefaultConstraintViolation();  //do not add wrapper's message
 
@@ -119,7 +131,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
             Object element = it.next();
             if (element == null) continue;
 
-            ConstraintValidator validator = getCachedValidator(element.getClass());
+            ConstraintValidator validator = getValidatorInstance(element.getClass());
 
             for (ConstraintDescriptor descriptor : descriptors) {
                 validator.initialize(descriptor.getAnnotation());
@@ -186,7 +198,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
             LOG.trace("Found validator {} for type {}", validator.getName(), type.getName());
             validators.put(type, validator);
         }
-        return validators;
+        return unmodifiableMap(validators);
     }
 
     protected Class<?> determineTargetType(Class<? extends ConstraintValidator<?, ?>> validatorClass) {
@@ -194,18 +206,13 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         return TypeUtils.getRawType(typeVar, validatorClass);
     }
 
+    protected ConstraintValidator getValidatorInstance(Class<?> type) {
+        ConstraintValidator validator = validatorInstances.get(type);
 
-    protected Map<Class, ConstraintValidator> cache() {
-        return validatorInstancesCache;
-    }
-
-    protected ConstraintValidator getCachedValidator(Class<?> type) {
-        if (cache().containsKey(type)) {
-            return cache().get(type);
+        if (validator == null) {
+            validator = findAndInitializeValidator(type);
+            validatorInstances.put(type, validator);
         }
-        ConstraintValidator validator = findAndInitializeValidator(type);
-        cache().put(type, validator);
-
         return validator;
     }
 
@@ -215,12 +222,10 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         for (Class<?> clazz : validators.keySet()) {
             if (! clazz.isAssignableFrom(type)) continue;
 
-            Class<? extends ConstraintValidator> validatorClass = validators.get(clazz);
+            Class validatorClass = validators.get(clazz);
 
             LOG.trace("Initializing validator: {}", validatorClass.getName());
-            ConstraintValidator validator = factory.getConstraintValidatorFactory().getInstance(validatorClass);
-
-            return validator;
+            return factory.getConstraintValidatorFactory().getInstance(validatorClass);
         }
         throw new IllegalArgumentException("No validator found for type: " + type.getName());
     }
