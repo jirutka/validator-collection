@@ -29,7 +29,7 @@ import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory
 class TestUtils {
 
     static evalClassWithConstraint(annotationLine, List values) {
-        def value = values ? "[ ${values.collect{"'$it'"}.join(',')} ]" : null
+        def value = values ? "[ ${values.collect{ toLiteral(it) }.join(',')} ]" : null
 
         def template = """
             import cz.jirutka.validator.collection.constraints.*
@@ -42,6 +42,15 @@ class TestUtils {
             }
         """
         new GroovyClassLoader().parseClass(template).newInstance()
+    }
+
+    static toLiteral(value) {
+        switch (value) {
+            case null    : return null
+            case Number  : // go to next
+            case Boolean : return String.valueOf(value)
+            default      : return "'${value.toString()}'"
+        }
     }
 
     static createAnnotation(Class annotationType, Map attributes) {

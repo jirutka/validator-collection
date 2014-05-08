@@ -129,9 +129,10 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         int index = 0;
         for (Iterator<?> it = collection.iterator(); it.hasNext(); index++) {
             Object element = it.next();
-            if (element == null) continue;
 
-            ConstraintValidator validator = getValidatorInstance(element.getClass());
+            ConstraintValidator validator = element != null
+                    ? getValidatorInstance(element.getClass())
+                    : getAnyValidatorInstance();
 
             for (ConstraintDescriptor descriptor : descriptors) {
                 validator.initialize(descriptor.getAnnotation());
@@ -206,6 +207,12 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         return TypeUtils.getRawType(typeVar, validatorClass);
     }
 
+    /**
+     * Returns initialized validator instance for the specified object type.
+     * Instances are cached.
+     *
+     * @param type Type of the object to be validated.
+     */
     protected ConstraintValidator getValidatorInstance(Class<?> type) {
         ConstraintValidator validator = validatorInstances.get(type);
 
@@ -214,6 +221,22 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
             validatorInstances.put(type, validator);
         }
         return validator;
+    }
+
+    /**
+     * Returns initialized validator instance for any object type. This is used
+     * when the object to be validated is <tt>null</tt> so we can't determine
+     * it's type. Instances are cached.
+     */
+    protected ConstraintValidator getAnyValidatorInstance() {
+
+        if (validatorInstances.isEmpty()) {
+            Class type = validators.keySet().iterator().next();
+            return findAndInitializeValidator(type);
+
+        } else {
+            return validatorInstances.values().iterator().next();
+        }
     }
 
     protected ConstraintValidator findAndInitializeValidator(Class<?> type) {

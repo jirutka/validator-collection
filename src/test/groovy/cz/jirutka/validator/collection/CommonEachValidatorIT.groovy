@@ -38,22 +38,23 @@ class CommonEachValidatorIT extends Specification {
     def constraint = null
 
 
-    def 'validate @Each* on field with #desc'() {
+    def 'validate @EachSize on field with #desc'() {
         given:
             constraint = '@EachSize(min=2, max=6)'
         expect:
             assertViolations values, isValid, message
         where:
-            values       | desc                    || isValid | message
-            ['f', 'ab']  | 'first value invalid'   || false   | 'size must be between 2 and 6'
-            ['ab', '']   | 'last value invalid'    || false   | 'size must be between 2 and 6'
-            ['foo']      | 'valid value'           || true    | null
-            ['ab', 'cd'] | 'valid values'          || true    | null
-            []           | 'empty list'            || true    | null
-            null         | 'null'                  || true    | null
+            values       | desc                     || isValid | message
+            ['f', 'ab']  | 'first value invalid'    || false   | 'size must be between 2 and 6'
+            ['ab', '']   | 'last value invalid'     || false   | 'size must be between 2 and 6'
+            ['foo']      | 'valid value'            || true    | null
+            ['ab', 'cd'] | 'valid values'           || true    | null
+            [null, 'ab'] | 'valid values with null' || true    | null
+            []           | 'empty list'             || true    | null
+            null         | 'null'                   || true    | null
     }
 
-    def 'validate @Each* used in composite constraint with #desc'() {
+    def 'validate @EachSize @EachPattern used in composite constraint with #desc'() {
         given:
            constraint = '@EachComposite'
         expect:
@@ -65,7 +66,7 @@ class CommonEachValidatorIT extends Specification {
             ['ab', 'cd']   | 'valid values'              || true     | null
     }
 
-    def 'validate legacy @Each* on field with #desc'() {
+    def 'validate @LegacyEachSize on field with #desc'() {
         given:
             constraint = '@LegacyEachSize(@Size(min=2, max=6))'
         expect:
@@ -74,6 +75,17 @@ class CommonEachValidatorIT extends Specification {
             values       | desc             || isValid | message
             ['f', 'ab']  | 'invalid value'  || false   | 'size must be between 2 and 6'
             ['ab', 'cd'] | 'valid values'   || true    | null
+    }
+
+    def 'validate @EachNotNull on field with #desc'() {
+        given:
+            constraint = '@EachNotNull'
+        expect:
+            assertViolations values, isValid, message
+        where:
+            values      | desc              || isValid | message
+            ['a', null] | 'a null value'    || false   | 'may not be null'
+            ['a', 'b']  | 'not null values' || true    | null
     }
 
 
