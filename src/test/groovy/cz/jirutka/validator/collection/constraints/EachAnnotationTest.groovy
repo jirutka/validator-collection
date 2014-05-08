@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package cz.jirutka.validator.collection.constraints
 
 import spock.lang.Specification
@@ -30,8 +29,11 @@ import spock.lang.Unroll
 @Unroll
 class EachAnnotationTest extends Specification {
 
-    static final CONSTRAINTS = [EachDecimalMax, EachDecimalMin, EachDigits, EachFuture,
-                                EachMax, EachMax, EachPast, EachPattern, EachSize]
+    static final CONSTRAINTS = [
+            EachAssertFalse, EachAssertTrue, EachDecimalMax, EachDecimalMin,
+            EachDigits, EachFuture, EachMax, EachMin, EachNotNull, EachPast,
+            EachPattern, EachSize
+    ]
 
     def 'verify that @#name is annotated with @EachConstraint(validateAs = #expValidateAsName)'() {
         expect:
