@@ -15,7 +15,10 @@ For an example:
 
 ```java
 @EachSize(min = 5, max = 255)
-List<String> values;
+Collection<String> values;
+
+@EachFuture
+List<Date> dates;
 ```
 
 How to create a custom constraint
@@ -44,6 +47,19 @@ public @interface EachAwesome {
     String someAttribute();
 }
 ```
+
+### The old way
+
+The previous versions (before 2.1.0) used a different approach to write `@EachX` annotations (see
+[here](https://github.com/jirutka/validator-collection/tree/v2.0.2)). It’s still supported for custom constraints, but
+all the built-in annotations has been already updated to the new style.
+
+If you’re upgrading from an older version of Collection Validators, then you must update all built-in annotations
+you’re using to the new style; for an example:
+
+    @EachSize(@Size(min = 5, max = 255)) -> @EachSize(min = 5, max = 255)
+
+You _should_ also update your custom annotations, but it’s not necessary since the old style is still supported.
 
 
 Hibernate Validator 4.x vs. 5.x
