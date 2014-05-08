@@ -37,7 +37,7 @@ class TestUtils {
             import javax.validation.constraints.*
 
             class TestMock {
-                ${annotationLine}
+                ${annotationLine.replace('"', "'")}
                 public List valuesList = $value
             }
         """

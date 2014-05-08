@@ -88,6 +88,13 @@ class CommonEachValidatorIT extends Specification {
             ['a', 'b']  | 'not null values' || true    | null
     }
 
+    def 'validate @EachURL with custom message template'() {
+        given:
+           constraint = '@EachURL(protocol="https", message="must be a valid URL with {protocol}")'
+        expect:
+            assertViolations(['http://fit.cvut.cz'], false, 'must be a valid URL with https')
+    }
+
 
     //////// Helpers ////////
 
