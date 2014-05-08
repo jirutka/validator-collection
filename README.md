@@ -4,14 +4,14 @@ Bean Validation / Collection Validators
 [![Coverage Status](https://coveralls.io/repos/jirutka/validator-collection/badge.png?branch=2.x)](https://coveralls.io/r/jirutka/validator-collection?branch=2.x)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection)
 
-Neither [Bean Validation 1.1][JSR-349] (JSR 303/349) nor [Hibernate Validator], the reference _(and the only one…)_
-implementation of it, has any way how to simply validate a collection of simple types like String, Integer… (i.e.
+Neither [Bean Validation 1.1][JSR-349] (JSR 303/349) nor [Hibernate Validator], the only reference
+implementation of it, provide simple way to validate a collection of primitive types like String, Integer… (i.e.
 validate each element of the collection).
 
-This library provides a very simple way how to create a “pseudo constraint” (typically named as `@EachX`) for **any**
-validation constraint to annotate a collection of simple types, without writing any extra validator or some ugly
-wrapper classes for every collection. EachX constraints for every standard Bean Validation constraints are included.
-For an example:
+This library allows you to easily create a “pseudo constraint” (typically named as `@EachX`) for _any_
+validation constraint to annotate a collection of simple types, without writing an extra validator or 
+wrapper classes for every collection. `EachX` constraint is supported for all standard Bean Validation constraints.
+For example:
 
 ```java
 @EachSize(min = 5, max = 255)
@@ -24,7 +24,7 @@ List<Date> dates;
 How to create a custom constraint
 ---------------------------------
 
-There’s a magic constraint validator [CommonEachValidator] that is used in any `@EachX` pseudo constraint. To create an
+Every `@EachX` pseudo constraint uses [CommonEachValidator]. To create an
 `@EachAwesome` for your own `@Awesome` constraint, just copy&paste the annotation class (i.e. all the attributes and
 boilerplate meta annotations), replace `@Constraint` annotation with
 `@Constraint(validatedBy = CommonEachValidator.class)` and add the annotation
@@ -51,15 +51,15 @@ public @interface EachAwesome {
 ### The old way
 
 The previous versions (before 2.1.0) used a different approach to write `@EachX` annotations (see
-[here](https://github.com/jirutka/validator-collection/tree/v2.0.2)). It’s still supported for custom constraints, but
+[here](https://github.com/jirutka/validator-collection/tree/v2.0.2)). It is still supported for custom constraints, but
 all the built-in annotations has been already updated to the new style.
 
 If you’re upgrading from an older version of Collection Validators, then you must update all built-in annotations
-you’re using to the new style; for an example:
+to the new style. For example:
 
     @EachSize(@Size(min = 5, max = 255)) -> @EachSize(min = 5, max = 255)
 
-You _should_ also update your custom annotations, but it’s not necessary since the old style is still supported.
+You _should_ also update custom annotations. The old style is still supported but may be deprecated in the future.
 
 
 Hibernate Validator 4.x vs. 5.x
@@ -71,7 +71,7 @@ between versions 4.x and 5.x, therefore there are currently two main branches of
 *  [branch 1.x](https://github.com/jirutka/validator-collection/tree/1.x) for Hibernate Validator 4.x
 *  [branch 2.x](https://github.com/jirutka/validator-collection/tree/2.x) for Hibernate Validator 5.x
 
-Sadly, they changed it again in 5.1.x, so if you’re using Hibernate Validator 5.0.x, please update to 5.1.x or use
+Sadly, they have changed it again in 5.1.x, so if you’re using Hibernate Validator 5.0.x, please update to 5.1.x or use
 [prior version](https://github.com/jirutka/validator-collection/tree/v2.0.2) of this library.
 
 
