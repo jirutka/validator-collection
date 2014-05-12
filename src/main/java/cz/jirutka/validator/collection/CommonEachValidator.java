@@ -25,9 +25,9 @@ package cz.jirutka.validator.collection;
 
 import cz.jirutka.validator.collection.constraints.EachConstraint;
 import cz.jirutka.validator.collection.internal.AnnotationUtils;
+import cz.jirutka.validator.collection.internal.MessageInterpolatorContext;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.reflect.TypeUtils;
-import org.hibernate.validator.internal.engine.MessageInterpolatorContext;
 import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
 import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
 import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl.ConstraintType;
@@ -49,7 +49,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static cz.jirutka.validator.collection.internal.AnnotationUtils.*;
 import static java.util.Arrays.asList;
-import static java.util.Collections.*;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -260,7 +261,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
      * @return An interpolated message.
      */
     protected String createMessage(ConstraintDescriptor descriptor, Object value) {
-        Context context = new MessageInterpolatorContext(descriptor, value, Void.class, EMPTY_MAP);
+        Context context = new MessageInterpolatorContext(descriptor, value);
 
         Annotation constraint = descriptor.getAnnotation();
         String template = AnnotationUtils.readAttribute(constraint, "message", String.class);
