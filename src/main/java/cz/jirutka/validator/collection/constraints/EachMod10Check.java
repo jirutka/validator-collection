@@ -36,6 +36,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * @since Hibernate Validator 5.1.0
  * @see Mod10Check
  * @see CommonEachValidator
  */

@@ -67,7 +67,7 @@ public @interface EachDecimalMax {
      * @return {@code true} if the value must be lower or equal to the specified maximum,
      *         {@code false} if the value must be lower
      *
-     * @since 1.1
+     * @since Hibernate Validator 5.0.0
      */
     boolean inclusive() default true;
 }

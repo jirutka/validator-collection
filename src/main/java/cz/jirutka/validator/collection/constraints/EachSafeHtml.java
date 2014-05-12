@@ -68,6 +68,7 @@ public @interface EachSafeHtml {
 
     /**
      * @return Allows to specify additional whitelist tags with optional attributes.
+     * @since Hibernate Validator 5.1.0
      */
     Tag[] additionalTagsWithAttributes() default { };
 }
