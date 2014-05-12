@@ -25,12 +25,10 @@ package cz.jirutka.validator.collection;
 
 import cz.jirutka.validator.collection.constraints.EachConstraint;
 import cz.jirutka.validator.collection.internal.AnnotationUtils;
+import cz.jirutka.validator.collection.internal.ConstraintDescriptorFactory;
 import cz.jirutka.validator.collection.internal.MessageInterpolatorContext;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.reflect.TypeUtils;
-import org.hibernate.validator.internal.metadata.core.ConstraintHelper;
-import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
-import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl.ConstraintType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +40,6 @@ import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
 import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +58,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class CommonEachValidator implements ConstraintValidator<Annotation, Collection<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CommonEachValidator.class);
-    private static final ConstraintHelper CONSTRAINT_HELPER = new ConstraintHelper();
+
+    private static final ConstraintDescriptorFactory DESCRIPTOR_FACTORY = ConstraintDescriptorFactory.newInstance();
 
     // injected by container, or set default during initialization
     private @Inject ValidatorFactory factory;
@@ -168,22 +166,8 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         return AnnotationUtils.readAttribute(wrapper, "value", Annotation[].class);
     }
 
-    /**
-     * Note: The <tt>member</tt> argument of the {@link ConstraintDescriptorImpl} constructor is
-     * set to <tt>null</tt>, which may cause problems in some specific situations.
-     *
-     * <p>The problem is that it's not possible to access the validated "member" (field, method,
-     * constructor) from the validator context (or just don't know how). However, this "member"
-     * argument is currently (HV v5.0.1, 5.1.0) used only to determine type of the constraint in some
-     * ambiguous situations (see {@link ConstraintDescriptorImpl#determineConstraintType}).
-     * It seems that it's not necessary for "normal" validators and everything works fine. But to
-     * be honest, I'm not sure which specific types of validators will fail with this.</p>
-     *
-     * @param constraint The constraint annotation to create descriptor for.
-     */
     protected ConstraintDescriptor createConstraintDescriptor(Annotation constraint) {
-        return new ConstraintDescriptorImpl(
-                CONSTRAINT_HELPER, null, constraint, ElementType.LOCAL_VARIABLE, ConstraintType.GENERIC);
+        return DESCRIPTOR_FACTORY.buildConstraintDescriptor(constraint);
     }
 
     protected <T extends ConstraintValidator<?, ?>>

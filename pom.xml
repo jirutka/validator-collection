@@ -62,7 +62,8 @@
     <!--//////////////////// PROPERTIES ////////////////////-->
 
     <properties>
-        <hibernate-validator.version>[5.1.0.Final,)</hibernate-validator.version>
+        <!-- Recommended version is 5.1.0 or greater. -->
+        <hibernate-validator.version>[4.3.0.Final,)</hibernate-validator.version>
     </properties>
 
 
@@ -120,6 +121,9 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+
+    <!--//////////////////// PROFILES ////////////////////-->
 
     <profiles>
         <profile>
