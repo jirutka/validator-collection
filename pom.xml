@@ -15,7 +15,7 @@
 
     <groupId>cz.jirutka.validator</groupId>
     <artifactId>validator-collection</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
     <packaging>jar</packaging>
 
     <name>validator-collection</name>
@@ -45,7 +45,6 @@
     <scm>
         <url>http://github.com/jirutka/validator-collection</url>
         <connection>scm:git:git@github.com:jirutka/validator-collection.git</connection>
-        <tag>2.x</tag>
     </scm>
 
     <ciManagement>

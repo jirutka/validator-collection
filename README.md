@@ -73,7 +73,7 @@ Released versions are available in The Central Repository. Just add this artifac
 <dependency>
     <groupId>cz.jirutka.validator</groupId>
     <artifactId>validator-collection</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 
