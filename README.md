@@ -1,7 +1,7 @@
 Bean Validation / Collection Validators
 =======================================
-[![Build Status](https://travis-ci.org/jirutka/validator-collection.svg?branch=2.x)](https://travis-ci.org/jirutka/validator-collection)
-[![Coverage Status](https://coveralls.io/repos/jirutka/validator-collection/badge.png?branch=2.x)](https://coveralls.io/r/jirutka/validator-collection?branch=2.x)
+[![Build Status](https://travis-ci.org/jirutka/validator-collection.svg?branch=master)](https://travis-ci.org/jirutka/validator-collection)
+[![Coverage Status](https://coveralls.io/repos/jirutka/validator-collection/badge.png?branch=master)](https://coveralls.io/r/jirutka/validator-collection?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection)
 
 Neither [Bean Validation 1.1][JSR-349] (JSR 303/349) nor [Hibernate Validator], the reference _(and the only one…)_
@@ -64,19 +64,6 @@ to the new style. For example:
 You _should_ also update custom annotations. The old style is still supported, but may be deprecated in the future.
 
 
-Hibernate Validator 4.x vs. 5.x
--------------------------------
-
-This code uses some internal classes of [Hibernate Validator]. Unfortunately, Hibernate has changed some internal APIs
-between versions 4.x and 5.x, therefore there are currently two main branches of this library:
-
-*  [branch 1.x](https://github.com/jirutka/validator-collection/tree/1.x) for Hibernate Validator 4.x
-*  [branch 2.x](https://github.com/jirutka/validator-collection/tree/2.x) for Hibernate Validator 5.x
-
-Sadly, they have changed it again in 5.1.x, so if you’re using Hibernate Validator 5.0.x, please update to 5.1.x or use
-[prior version](https://github.com/jirutka/validator-collection/tree/v2.0.2) of this library.
-
-
 Maven
 -----
 
@@ -102,6 +89,14 @@ However if you want to use the last snapshot version, you have to add the Sonaty
     </snapshots>
 </repository>
 ```
+
+Requirements
+------------
+
+[Hibernate Validator] 4.3.1.Final and newer is supported, but 5.× is recommended.
+
+Please note that on older versions some Hibernate specific constraints doesn’t exist, so their `@EachX` annotations will
+not work (e.g. `@EachEAN`, `@EachMod10Check`, …). It’s described in JavaDoc.
 
 
 License
