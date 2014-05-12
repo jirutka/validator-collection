@@ -126,12 +126,66 @@
     <!--//////////////////// PROFILES ////////////////////-->
 
     <profiles>
+        <!--
+            Release profile to build always with the same Hibernate Validator version (instead of
+            the newest available because of version range).
+        -->
         <profile>
             <id>release</id>
 
             <properties>
                 <hibernate-validator.version>5.1.1.Final</hibernate-validator.version>
             </properties>
+        </profile>
+
+        <!--
+            Profile to run integration tests with different version of Hibernate Validator then the
+            compile version.
+        -->
+        <profile>
+            <id>test-different-hv-version</id>
+
+            <properties>
+                <hibernate-validator.version.test>${env.HV_VERSION}</hibernate-validator.version.test>
+                <dependency.directory>${project.build.directory}/dependency</dependency.directory>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${dependency.directory}</outputDirectory>
+                                    <artifactItems>
+                                        <item>
+                                            <groupId>org.hibernate</groupId>
+                                            <artifactId>hibernate-validator</artifactId>
+                                            <version>${hibernate-validator.version.test}</version>
+                                        </item>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <classpathDependencyExcludes>
+                                <exclude>org.hibernate:hibernate-validator</exclude>
+                            </classpathDependencyExcludes>
+                            <additionalClasspathElements>
+                                <element>${dependency.directory}/hibernate-validator-${hibernate-validator.version.test}.jar</element>
+                            </additionalClasspathElements>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
