@@ -140,6 +140,9 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
 
                     String message = createMessage(descriptor, element);
                     context.buildConstraintViolationWithTemplate(message)
+                            .addBeanNode()
+                            .inIterable()
+                            .atIndex(index)
                             .addConstraintViolation();
                     return false;
                 }
