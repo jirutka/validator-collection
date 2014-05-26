@@ -59,7 +59,7 @@ class CommonEachValidatorIT extends Specification {
 
     def 'validate @EachSize @EachPattern used in composite constraint with #desc'() {
         given:
-           constraint = '@EachComposite'
+            constraint = '@EachComposite'
         expect:
             assertViolations values, isValid, invalidIndex, message
         where:
@@ -93,7 +93,7 @@ class CommonEachValidatorIT extends Specification {
 
     def 'validate @EachURL with custom message template'() {
         given:
-           constraint = '@EachURL(protocol="https", message="must be a valid URL with {protocol}")'
+            constraint = '@EachURL(protocol="https", message="must be a valid URL with {protocol}")'
         expect:
             assertViolations(['http://fit.cvut.cz'], false, 0, 'must be a valid URL with https')
     }
