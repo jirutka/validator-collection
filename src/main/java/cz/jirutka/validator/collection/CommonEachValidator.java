@@ -45,6 +45,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cz.jirutka.validator.collection.internal.AnnotationUtils.*;
+import static cz.jirutka.validator.collection.internal.ConstraintValidatorContextUtils.addConstraintViolationInIterable;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
@@ -139,11 +140,8 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
                             index, element, validator.getClass().getName());
 
                     String message = createMessage(descriptor, element);
-                    context.buildConstraintViolationWithTemplate(message)
-                            .addBeanNode()
-                            .inIterable()
-                            .atIndex(index)
-                            .addConstraintViolation();
+
+                    addConstraintViolationInIterable(context, message, index);
                     return false;
                 }
             }

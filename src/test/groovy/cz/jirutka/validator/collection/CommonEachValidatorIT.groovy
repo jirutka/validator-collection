@@ -23,6 +23,7 @@
  */
 package cz.jirutka.validator.collection
 
+import cz.jirutka.validator.collection.internal.HibernateValidatorInfo
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -32,6 +33,8 @@ import static cz.jirutka.validator.collection.TestUtils.evalClassWithConstraint
 
 @Unroll
 class CommonEachValidatorIT extends Specification {
+
+    static HV_VERSION = HibernateValidatorInfo.getVersion()
 
     def validator = Validation.buildDefaultValidatorFactory().getValidator()
 
@@ -104,6 +107,7 @@ class CommonEachValidatorIT extends Specification {
 
     void assertViolations(Object value, boolean shouldBeValid, Integer invalidIndex, String expectedMessage) {
         def entity = evalClassWithConstraint(constraint, value)
+        def propertyPath = HV_VERSION >= 5_0_0 ? "valuesList[${invalidIndex}]" : 'valuesList'
         def violations = validate(entity)
 
         assert violations.isEmpty() == shouldBeValid
@@ -111,7 +115,7 @@ class CommonEachValidatorIT extends Specification {
         if (!shouldBeValid) {
             assert violations.size() == 1
             assert violations[0].invalidValue == value
-            assert violations[0].propertyPath.toString() == 'valuesList[' + invalidIndex + ']'
+            assert violations[0].propertyPath.toString() == propertyPath
             assert violations[0].rootBean.is(entity)
             assert violations[0].rootBeanClass == entity.class
             assert violations[0].message == expectedMessage
