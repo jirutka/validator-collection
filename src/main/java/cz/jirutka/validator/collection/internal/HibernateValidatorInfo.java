@@ -39,7 +39,7 @@ public abstract class HibernateValidatorInfo {
      *
      * <p>Version number is parsed as: 5.1.1.Final -> 511, 5.2.0-SNAPSHOT -> 520.</p>
      *
-     * @return A parsed version number, or 0 if could not determine.
+     * @return A parsed version number, or {@link Integer#MAX_VALUE} if could not be determined.
      */
     public static int getVersion() {
 
@@ -54,7 +54,7 @@ public abstract class HibernateValidatorInfo {
             }
         }
         LOG.warn("Could not determine Hibernate Validator version");
-        return 0;
+        return Integer.MAX_VALUE;
     }
 
     static int parseVersion(String version) {

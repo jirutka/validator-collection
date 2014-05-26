@@ -67,7 +67,7 @@ public abstract class ConstraintDescriptorFactory {
 
         int version = HibernateValidatorInfo.getVersion();
 
-        if (version >= 5_1_0 || version == 0) {
+        if (version >= 5_1_0) {
             return new ConstraintDescriptorFactory() {
                 Class[] getConstructorArguments() {
                     return new Class[]{ ConstraintHelper.class, Member.class, Annotation.class, ElementType.class };
