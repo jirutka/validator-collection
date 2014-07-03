@@ -74,6 +74,8 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
     // modifiable after initialization; must be thread-safe!
     private Map<Class, ConstraintValidator> validatorInstances;
 
+    private boolean earlyInterpolate = false;
+
 
     public void initialize(Annotation eachAnnotation) {
 
@@ -104,6 +106,8 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
                 list.add( createConstraintDescriptor(constraint) );
             }
             descriptors = unmodifiableList(list);
+
+            this.earlyInterpolate = true;
 
         } else {
             throw new IllegalArgumentException(String.format(
@@ -139,8 +143,13 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
                     LOG.debug("Element [{}] = '{}' is invalid according to: {}",
                             index, element, validator.getClass().getName());
 
-                    String message = createMessage(descriptor, element);
+                    String message;
 
+                    if (this.earlyInterpolate) {
+                        message = createMessage(descriptor, element);
+                    } else {
+                        message = getMessageTemplate(descriptor);
+                    }
                     addConstraintViolationInIterable(context, message, index);
                     return false;
                 }
@@ -252,6 +261,17 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         String template = AnnotationUtils.readAttribute(constraint, "message", String.class);
 
         return factory.getMessageInterpolator().interpolate(template, context);
+    }
+    /**
+     * Reads the error message template for the given constraint and
+     * value.
+     *
+     * @param descriptor Descriptor of the constraint that the value violated.
+     * @return A message template.
+     */
+    protected String getMessageTemplate(ConstraintDescriptor descriptor) {
+        Annotation constraint = descriptor.getAnnotation();
+        return AnnotationUtils.readAttribute(constraint, "message", String.class);
     }
 
     /**
