@@ -54,7 +54,7 @@ class CommonEachValidatorTest extends Specification {
             def value = new Object()
             def expected = 'must match "[a-z]"'
         when:
-            def actual = validator.createMessage(descriptor, value)
+            def actual = validator.createInterpolatedMessage(descriptor, value)
         then:
             1 * interpolator.interpolate(msgTemplate, { Context cxt ->
                 cxt.constraintDescriptor == descriptor && cxt.validatedValue == value
