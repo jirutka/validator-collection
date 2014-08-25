@@ -97,7 +97,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
 
             descriptors = unmodifiableList(asList(descriptor));
 
-        // legacy
+        // legacy and deprecated, will be removed in next major version!
         } else if (isWrapperAnnotation(eachAType)) {
             Annotation[] constraints = unwrapConstraints(eachAnnotation);
             Validate.notEmpty(constraints, "%s annotation does not contain any constraint", eachAType);
@@ -108,6 +108,9 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
             }
             descriptors = unmodifiableList(list);
             earlyInterpolation = true;
+
+            LOG.info("You're using legacy @EachX annotation style, this will be removed soon! " +
+                     "Please update your @EachX annotations.");
 
         } else {
             throw new IllegalArgumentException(String.format(
