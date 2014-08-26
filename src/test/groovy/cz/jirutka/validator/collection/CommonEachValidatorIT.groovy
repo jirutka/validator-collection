@@ -24,6 +24,8 @@
 package cz.jirutka.validator.collection
 
 import cz.jirutka.validator.collection.internal.HibernateValidatorInfo
+import spock.lang.Ignore
+import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -78,6 +80,44 @@ class CommonEachValidatorIT extends Specification {
             values      | desc              || isValid
             ['a', null] | 'a null value'    || false
             ['a', 'b']  | 'not null values' || true
+    }
+
+    @Ignore('should be fixed!') @Issue('#8')
+    def 'validate @EachX for pure composite constraint [ #desc ]'() {
+        given:
+            constraint = '@EachRange(min=16L, max=64L)'
+        expect:
+            assertViolations values, isValid, 0, 'must be between 16 and 64'
+        where:
+            values | desc            || isValid
+            [6]    | 'invalid value' || false
+            [42]   | 'valid value'   || true
+    }
+
+    @Ignore('should be fixed!') @Issue('#8')
+    def 'validate @EachX for half-composite constraint [ #desc ]'() {
+        given:
+            constraint = '@EachNotBlank'
+        expect:
+            assertViolations values, isValid, invalidIndex, 'may not be empty'
+        where:
+            values        | desc                               || isValid | invalidIndex
+            ['']          | 'value invalid by top validator'   || false   | 0
+            ['foo', null] | 'value invalid by composite cons.' || false   | 1
+            ['allons-y!'] | 'valid value'                      || true    | null
+    }
+
+    @Ignore('should be fixed!') @Issue('#8')
+    def 'validate @EachX for constraint that uses @OverridesAttribute [ #desc value ]'() {
+        given:
+            constraint = '@EachURL(protocol="https", regexp=".*[^x]$")'
+        expect:
+            assertViolations values, isValid, 0, 'must be a valid URL'
+        where:
+            values                  | desc                            || isValid
+            ['http://fit.cvut.cz']  | "invalid normal attribute's"    || false
+            ['https://fit.cvut.cx'] | "invalid overrided attribute's" || false
+            ['https://fit.cvut.cz'] | 'valid'                         || true
     }
 
     def 'validate @EachX with custom message template'() {
