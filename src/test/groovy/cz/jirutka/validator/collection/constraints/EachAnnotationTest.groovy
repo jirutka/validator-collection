@@ -52,19 +52,19 @@ class EachAnnotationTest extends Specification {
             expValidateAsName = name.replaceFirst('^Each', '') + '.class'
     }
 
-    def 'verify that #constraint.simpleName has same attributes as its validateAs constraint'() {
+    def 'verify that #constraint.simpleName contains all attributes from its validateAs constraint'() {
         setup:
            def validateAs = constraint.getAnnotation(EachConstraint).validateAs()
         expect:
-            attributesTypes(constraint) == attributesTypes(validateAs)
+            attributesTypesSet(constraint).containsAll attributesTypesSet(validateAs)
         where:
             constraint << CONSTRAINTS
     }
 
 
-    def attributesTypes(annotation) {
-        annotation.declaredMethods.collectEntries { m ->
-            [(m.name): m.returnType]
+    def attributesTypesSet(Class annotation) {
+        annotation.declaredMethods.collect(new HashSet()) { m ->
+            [m.name, m.returnType]
         }
     }
 }
