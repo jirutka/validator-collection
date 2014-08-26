@@ -41,7 +41,7 @@ class CommonEachValidatorIT extends Specification {
     def constraint = null
 
 
-    def 'validate @EachSize on field with #desc'() {
+    def 'validate @EachX for common constraint [ #desc ]'() {
         given:
             constraint = '@EachSize(min=2, max=6)'
         expect:
@@ -57,30 +57,19 @@ class CommonEachValidatorIT extends Specification {
             null         | 'null'                   || true    | null         | null
     }
 
-    def 'validate @EachSize @EachPattern used in composite constraint with #desc'() {
+    def 'validate composite constraint with two @EachX [ #desc ]'() {
         given:
             constraint = '@EachComposite'
         expect:
             assertViolations values, isValid, invalidIndex, message
         where:
-            values         | desc                        || isValid  | invalidIndex | message
-            ['f']          | 'value invalid by @Size'    || false    | 0            | 'size must be between 2 and 8'
-            ['foo', '132'] | 'value invalid by @Pattern' || false    | 1            | 'must contain a-z only'
-            ['ab', 'cd']   | 'valid values'              || true     | null         | null
+            values         | desc                            || isValid | invalidIndex | message
+            ['f']          | 'value invalid by first cons.'  || false   | 0            | 'size must be between 2 and 8'
+            ['foo', '132'] | 'value invalid by second cons.' || false   | 1            | 'must contain a-z only'
+            ['ab', 'cd']   | 'valid values'                  || true    | null         | null
     }
 
-    def 'validate @LegacyEachSize on field with #desc'() {
-        given:
-            constraint = '@LegacyEachSize(@Size(min=2, max=6))'
-        expect:
-            assertViolations values, isValid, invalidIndex, message
-        where:
-            values       | desc             || isValid | invalidIndex | message
-            ['f', 'ab']  | 'invalid value'  || false   | 0            | 'size must be between 2 and 6'
-            ['ab', 'cd'] | 'valid values'   || true    | null         | null
-    }
-
-    def 'validate @EachNotNull on field with #desc'() {
+    def 'validate @EachX for constraint that validates nulls [ #desc ]'() {
         given:
             constraint = '@EachNotNull'
         expect:
@@ -91,11 +80,22 @@ class CommonEachValidatorIT extends Specification {
             ['a', 'b']  | 'not null values' || true    | null         | null
     }
 
-    def 'validate @EachURL with custom message template'() {
+    def 'validate @EachX with custom message template'() {
         given:
             constraint = '@EachURL(protocol="https", message="must be a valid URL with {protocol}")'
         expect:
             assertViolations(['http://fit.cvut.cz'], false, 0, 'must be a valid URL with https')
+    }
+
+    def 'validate legacy @EachX constraint [ #desc ]'() {
+        given:
+            constraint = '@LegacyEachSize(@Size(min=2, max=6))'
+        expect:
+            assertViolations values, isValid, invalidIndex, message
+        where:
+            values       | desc             || isValid | invalidIndex | message
+            ['f', 'ab']  | 'invalid value'  || false   | 0            | 'size must be between 2 and 6'
+            ['ab', 'cd'] | 'valid values'   || true    | null         | null
     }
 
 
