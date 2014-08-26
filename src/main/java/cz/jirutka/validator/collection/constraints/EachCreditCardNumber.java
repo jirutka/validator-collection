@@ -25,8 +25,10 @@ package cz.jirutka.validator.collection.constraints;
 
 import cz.jirutka.validator.collection.CommonEachValidator;
 import org.hibernate.validator.constraints.CreditCardNumber;
+import org.hibernate.validator.constraints.LuhnCheck;
 
 import javax.validation.Constraint;
+import javax.validation.OverridesAttribute;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -51,4 +53,12 @@ public @interface EachCreditCardNumber {
     Class<?>[] groups() default { };
 
     Class<? extends Payload>[] payload() default { };
+
+    /**
+     * @return Whether non-digit characters in the validated input should be ignored ({@code true}) or result in a
+     * validation error ({@code false}). Default is {@code false}
+     *
+     * @since Hibernate Validator 5.1.2
+     */
+    boolean ignoreNonDigitCharacters() default false;
 }
