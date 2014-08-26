@@ -45,16 +45,16 @@ class CommonEachValidatorIT extends Specification {
         given:
             constraint = '@EachSize(min=2, max=6)'
         expect:
-            assertViolations values, isValid, invalidIndex, message
+            assertViolations values, isValid, invalidIndex, 'size must be between 2 and 6'
         where:
-            values       | desc                     || isValid | invalidIndex | message
-            ['f', 'ab']  | 'first value invalid'    || false   | 0            | 'size must be between 2 and 6'
-            ['ab', '']   | 'last value invalid'     || false   | 1            | 'size must be between 2 and 6'
-            ['foo']      | 'valid value'            || true    | null         | null
-            ['ab', 'cd'] | 'valid values'           || true    | null         | null
-            [null, 'ab'] | 'valid values with null' || true    | null         | null
-            []           | 'empty list'             || true    | null         | null
-            null         | 'null'                   || true    | null         | null
+            values       | desc                     || isValid | invalidIndex
+            ['f', 'ab']  | 'first value invalid'    || false   | 0
+            ['ab', '']   | 'last value invalid'     || false   | 1
+            ['foo']      | 'valid value'            || true    | null
+            ['ab', 'cd'] | 'valid values'           || true    | null
+            [null, 'ab'] | 'valid values with null' || true    | null
+            []           | 'empty list'             || true    | null
+            null         | 'null'                   || true    | null
     }
 
     def 'validate composite constraint with two @EachX [ #desc ]'() {
@@ -73,11 +73,11 @@ class CommonEachValidatorIT extends Specification {
         given:
             constraint = '@EachNotNull'
         expect:
-            assertViolations values, isValid, invalidIndex, message
+            assertViolations values, isValid, 1, 'may not be null'
         where:
-            values      | desc              || isValid | invalidIndex | message
-            ['a', null] | 'a null value'    || false   | 1            | 'may not be null'
-            ['a', 'b']  | 'not null values' || true    | null         | null
+            values      | desc              || isValid
+            ['a', null] | 'a null value'    || false
+            ['a', 'b']  | 'not null values' || true
     }
 
     def 'validate @EachX with custom message template'() {
@@ -91,11 +91,11 @@ class CommonEachValidatorIT extends Specification {
         given:
             constraint = '@LegacyEachSize(@Size(min=2, max=6))'
         expect:
-            assertViolations values, isValid, invalidIndex, message
+            assertViolations values, isValid, 0, 'size must be between 2 and 6'
         where:
-            values       | desc             || isValid | invalidIndex | message
-            ['f', 'ab']  | 'invalid value'  || false   | 0            | 'size must be between 2 and 6'
-            ['ab', 'cd'] | 'valid values'   || true    | null         | null
+            values       | desc             || isValid
+            ['f', 'ab']  | 'invalid value'  || false
+            ['ab', 'cd'] | 'valid values'   || true
     }
 
 
