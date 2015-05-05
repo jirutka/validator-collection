@@ -38,4 +38,12 @@ class HibernateValidatorInfoTest extends Specification {
             '5.2.0-SNAPSHOT' | 520
             '4.0.0.GA'       | 400
     }
+
+    def 'get version from file: #file'() {
+        expect:
+            HibernateValidatorInfo.getVersionFromFile(file) == "5.3.0.Final"
+        where:
+            file = "test-hibernate-version.txt"
+
+    }
 }
