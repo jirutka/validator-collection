@@ -50,10 +50,14 @@ public abstract class HibernateValidatorInfo {
      * @return A parsed version number, or {@link Integer#MAX_VALUE} if could not be determined.
      */
     public static int getVersion() {
+        return getVersion(HIBERNATE_VERSION_FILE);
+    }
+
+    public static int getVersion(String versionFile) {
         // try to get the version from HIBERNATE_VERSION_FILE if it exists
         String maybeFileVersion = null;
         try {
-            maybeFileVersion = getVersionFromFile(HIBERNATE_VERSION_FILE);
+            maybeFileVersion = getVersionFromFile(versionFile);
         } catch (IOException e) {
             LOG.error("Failed to determine hibernate version from " + HIBERNATE_VERSION_FILE +
                 "; falling back to trying to determine hibernate version from package metadata.");
