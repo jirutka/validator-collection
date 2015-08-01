@@ -11,4 +11,9 @@ env:
 script:
   - "mvn verify -B -Ptest-different-hv-version -Dhibernate-validator.version.test=${HV_VERSION}"
 after_success:
-  - 'mvn jacoco:report coveralls:jacoco'
+  - mvn jacoco:report coveralls:jacoco
+cache:
+  directories:
+    - $HOME/.m2
+before_cache:
+  - rm -Rf ~/.m2/repository/cz/jirutka/validator/validator-collection
