@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.Integer.parseInt;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public abstract class HibernateValidatorInfo {
 
@@ -47,8 +48,9 @@ public abstract class HibernateValidatorInfo {
 
         if (pkg != null) {
             String version = pkg.getImplementationVersion();
+            String title = pkg.getImplementationTitle();
 
-            if (version != null && !version.isEmpty()) {
+            if (isNotEmpty(version) && "hibernate-validator".equals(title)) {
                 LOG.info("Found Hibernate Validator {}", version);
                 return parseVersion(version);
             }
