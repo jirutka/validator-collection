@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2015 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,11 +23,10 @@
  */
 package cz.jirutka.validator.collection.constraints;
 
-import cz.jirutka.validator.collection.CommonEachValidator;
-import org.hibernate.validator.constraints.Range;
-
 import javax.validation.Constraint;
+import javax.validation.OverridesAttribute;
 import javax.validation.Payload;
+import javax.validation.ReportAsSingleViolation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -36,23 +35,24 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * @see Range
- * @see CommonEachValidator
+ * @see org.hibernate.validator.constraints.Range
  */
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
-@EachConstraint(validateAs = Range.class)
-@Constraint(validatedBy = CommonEachValidator.class)
+@EachMin(0)
+@EachMax(Long.MAX_VALUE)
+@ReportAsSingleViolation
+@Constraint(validatedBy = { })
 public @interface EachRange {
 
-    String message() default "";
+    String message() default "{org.hibernate.validator.constraints.Range.message}";
 
     Class<?>[] groups() default { };
 
     Class<? extends Payload>[] payload() default { };
 
-    long min() default 0;
+    @OverridesAttribute(constraint = EachMin.class, name = "value") long min() default 0;
 
-    long max() default Long.MAX_VALUE;
+    @OverridesAttribute(constraint = EachMax.class, name = "value") long max() default Long.MAX_VALUE;
 }

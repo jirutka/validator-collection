@@ -25,6 +25,7 @@ package cz.jirutka.validator.collection.constraints
 
 import cz.jirutka.validator.collection.internal.HibernateValidatorInfo
 import org.hibernate.validator.constraints.NotEmpty
+import org.hibernate.validator.constraints.Range
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -56,7 +57,7 @@ class EachAnnotationTest extends Specification {
 
     // List of @Each* annotations which are only a composition of other @Each* annotations.
     static final COMPOSITE_CONSTRAINTS = [
-            EachNotEmpty
+            EachNotEmpty, EachRange
     ]
 
 
@@ -87,6 +88,7 @@ class EachAnnotationTest extends Specification {
         where:
             constraint           | validateAs
             EachNotEmpty         | NotEmpty
+            EachRange            | Range
     }
 
     def 'validate @#constraint.simpleName on collection of #type'() {
@@ -128,7 +130,8 @@ class EachAnnotationTest extends Specification {
             EachNotNull     | [:]                       | ['foo', 'bar']     | ['foo', null]
             EachPast        | [:]                       | [pastDate()]       | [futureDate()]
             EachPattern     | [regexp: '[A-Z]+']        | ['FOO', 'BAR']     | ['FOO', '123']
-            //EachRange       | [min: 3L, max: 6L]        | [3, 4, 5]          | [6, 7, 8]  FIXME!
+            EachRange       | [min: 3L, max: 6L]        | [3, 4, 5]          | [6, 7, 8]
+            EachRange       | [min: 3L, max: 6L]        | ['3', '4', '5']    | ['6', '7', '8']
             EachSafeHtml    | [:]                       | ['<b>foo</b>']     | ['<x>WAT?</x>']
             EachSize        | [min: 1, max: 2]          | ['a', 'xy']        | ['a', 'foo']
             EachSize        | [min: 1, max: 2]          | [[1], [2, 3]]      | [[1], [2, 3, 4]]
