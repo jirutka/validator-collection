@@ -34,7 +34,7 @@ import static cz.jirutka.validator.collection.TestUtils.evalClassWithConstraint
 import static cz.jirutka.validator.collection.TestUtils.validate
 
 @Unroll
-class EachAnnotationTest extends Specification {
+class EachAnnotationIT extends Specification {
 
     static final HV_VERSION = HibernateValidatorInfo.getVersion()
 
