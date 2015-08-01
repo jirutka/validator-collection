@@ -23,11 +23,14 @@
  */
 package cz.jirutka.validator.collection.internal
 
+import org.hibernate.validator.HibernateValidator
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @Unroll
 class HibernateValidatorInfoTest extends Specification {
+
+    public static final String testVersionFile = "test-hibernate-version.txt"
 
     def 'parse version: #input'() {
         expect:
@@ -37,5 +40,15 @@ class HibernateValidatorInfoTest extends Specification {
             '5.1.1.Final'    | 511
             '5.2.0-SNAPSHOT' | 520
             '4.0.0.GA'       | 400
+    }
+
+    def 'get version from file: #testVersionFile'() {
+        expect:
+            HibernateValidatorInfo.getVersionFromFile(testVersionFile) == "5.3.0.Final"
+    }
+
+    def 'get version: #file'() {
+        expect:
+            HibernateValidatorInfo.getVersion(testVersionFile) == 530
     }
 }

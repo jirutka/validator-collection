@@ -23,15 +23,23 @@
  */
 package cz.jirutka.validator.collection.internal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.HibernateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static java.lang.Integer.parseInt;
 
 public abstract class HibernateValidatorInfo {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateValidatorInfo.class);
+    public static final String HIBERNATE_VERSION_FILE =
+        "validator-collection-hibernate-version.txt";
 
     /**
      * Returns version of the Hibernate Validator determined from the package
@@ -42,7 +50,24 @@ public abstract class HibernateValidatorInfo {
      * @return A parsed version number, or {@link Integer#MAX_VALUE} if could not be determined.
      */
     public static int getVersion() {
+        return getVersion(HIBERNATE_VERSION_FILE);
+    }
 
+    public static int getVersion(String versionFile) {
+        // try to get the version from HIBERNATE_VERSION_FILE if it exists
+        String maybeFileVersion = null;
+        try {
+            maybeFileVersion = getVersionFromFile(versionFile);
+        } catch (IOException e) {
+            LOG.error("Failed to determine hibernate version from " + HIBERNATE_VERSION_FILE +
+                "; falling back to trying to determine hibernate version from package metadata.");
+        }
+
+        if (maybeFileVersion != null) {
+            return parseVersion(maybeFileVersion);
+        }
+
+        // otherwise, rely on the package metadata
         Package pkg = HibernateValidator.class.getPackage();
 
         if (pkg != null) {
@@ -55,6 +80,25 @@ public abstract class HibernateValidatorInfo {
         }
         LOG.warn("Could not determine Hibernate Validator version");
         return Integer.MAX_VALUE;
+    }
+
+    static String getVersionFromFile(String resourceName) throws IOException {
+        InputStream resourceAsStream =
+            HibernateValidatorInfo.class.getClassLoader().getResourceAsStream(resourceName);
+
+        if (resourceAsStream == null) {
+            return null;
+        }
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(resourceAsStream));
+
+            return StringUtils.strip(reader.readLine());
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
     }
 
     static int parseVersion(String version) {
