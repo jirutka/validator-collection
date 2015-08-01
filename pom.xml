@@ -141,7 +141,7 @@
             <id>release</id>
 
             <properties>
-                <hibernate-validator.version>5.1.1.Final</hibernate-validator.version>
+                <hibernate-validator.version>5.2.1.Final</hibernate-validator.version>
             </properties>
         </profile>
 
