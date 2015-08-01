@@ -24,6 +24,7 @@
 package cz.jirutka.validator.collection.constraints
 
 import cz.jirutka.validator.collection.internal.HibernateValidatorInfo
+import org.hibernate.validator.constraints.CreditCardNumber
 import org.hibernate.validator.constraints.NotEmpty
 import org.hibernate.validator.constraints.Range
 import spock.lang.Specification
@@ -57,7 +58,7 @@ class EachAnnotationTest extends Specification {
 
     // List of @Each* annotations which are only a composition of other @Each* annotations.
     static final COMPOSITE_CONSTRAINTS = [
-            EachNotEmpty, EachRange
+            EachCreditCardNumber, EachNotEmpty, EachRange
     ]
 
 
@@ -89,6 +90,7 @@ class EachAnnotationTest extends Specification {
             constraint           | validateAs
             EachNotEmpty         | NotEmpty
             EachRange            | Range
+            EachCreditCardNumber | CreditCardNumber
     }
 
     def 'validate @#constraint.simpleName on collection of #type'() {
@@ -105,7 +107,7 @@ class EachAnnotationTest extends Specification {
             constraint      | attributes                | validValue         | invalidValue
             EachAssertFalse | [:]                       | [false, false]     | [false, true]
             EachAssertTrue  | [:]                       | [true, true]       | [true, false]
-            //EachCreditCardNumber | [:]                 | [4417123456789113] | [4417123456789112]  FIXME!
+            EachCreditCardNumber | [:]                  | ['79927398713']    | ['79927398714']
             EachDecimalMax  | [value: '3']              | [1, 2, 3]          | [2, 3, 4]
             EachDecimalMax  | [value: '3']              | ['1', '2', '3']    | ['2', '3', '4']
             EachDecimalMin  | [value: '3']              | [3, 4, 5]          | [2, 3, 4]

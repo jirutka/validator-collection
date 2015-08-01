@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2015 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,13 +23,10 @@
  */
 package cz.jirutka.validator.collection.constraints;
 
-import cz.jirutka.validator.collection.CommonEachValidator;
-import org.hibernate.validator.constraints.CreditCardNumber;
-import org.hibernate.validator.constraints.LuhnCheck;
-
 import javax.validation.Constraint;
 import javax.validation.OverridesAttribute;
 import javax.validation.Payload;
+import javax.validation.ReportAsSingleViolation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -38,17 +35,17 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * @see CreditCardNumber
- * @see CommonEachValidator
+ * @see org.hibernate.validator.constraints.CreditCardNumber
  */
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
-@EachConstraint(validateAs = CreditCardNumber.class)
-@Constraint(validatedBy = CommonEachValidator.class)
+@EachLuhnCheck
+@ReportAsSingleViolation
+@Constraint(validatedBy = { })
 public @interface EachCreditCardNumber {
 
-    String message() default "";
+    String message() default "{org.hibernate.validator.constraints.CreditCardNumber.message}";
 
     Class<?>[] groups() default { };
 
@@ -60,5 +57,6 @@ public @interface EachCreditCardNumber {
      *
      * @since Hibernate Validator 5.1.2
      */
+    @OverridesAttribute(constraint = EachLuhnCheck.class, name = "ignoreNonDigitCharacters")
     boolean ignoreNonDigitCharacters() default false;
 }
