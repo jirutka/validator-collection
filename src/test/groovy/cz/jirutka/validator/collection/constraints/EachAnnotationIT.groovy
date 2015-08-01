@@ -24,6 +24,7 @@
 package cz.jirutka.validator.collection.constraints
 
 import cz.jirutka.validator.collection.internal.HibernateValidatorInfo
+import org.apache.commons.lang3.ClassUtils
 import org.hibernate.validator.constraints.CreditCardNumber
 import org.hibernate.validator.constraints.NotEmpty
 import org.hibernate.validator.constraints.Range
@@ -97,7 +98,7 @@ class EachAnnotationIT extends Specification {
             EachCreditCardNumber | CreditCardNumber
     }
 
-    def 'validate @#constraint.simpleName on collection of #type'() {
+    def 'validate @#constraintName on collection of #valuesType'() {
         setup:
             // skip test for constraints that doesn't work in the current HV version
             if (!eachConstraints.contains(constraint)) return
@@ -144,7 +145,8 @@ class EachAnnotationIT extends Specification {
             EachSize        | [min: 1, max: 2]          | [[a: 1], [b: 2]]   | [[a: 1], [:]]
             EachURL         | [protocol: 'https']       | ['https://nic.cz'] | ['http://nic.cz']
 
-            type = validValue[0].getClass().simpleName + 's'
+            constraintName = ClassUtils.getSimpleName(constraint)  // using ClassUtils to avoid NoClassDefFoundError
+            valuesType = validValue[0].getClass().simpleName + 's'
     }
 
 
