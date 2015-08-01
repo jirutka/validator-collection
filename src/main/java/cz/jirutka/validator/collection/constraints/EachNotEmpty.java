@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2015 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,11 +23,9 @@
  */
 package cz.jirutka.validator.collection.constraints;
 
-import cz.jirutka.validator.collection.CommonEachValidator;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
+import javax.validation.ReportAsSingleViolation;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -36,17 +34,18 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * @see NotEmpty
- * @see CommonEachValidator
+ * @see org.hibernate.validator.constraints.NotEmpty
  */
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
-@EachConstraint(validateAs = NotEmpty.class)
-@Constraint(validatedBy = CommonEachValidator.class)
+@EachNotNull
+@EachSize(min = 1)
+@ReportAsSingleViolation
+@Constraint(validatedBy = { })
 public @interface EachNotEmpty {
 
-    String message() default "";
+    String message() default "{org.hibernate.validator.constraints.NotEmpty.message}";
 
     Class<?>[] groups() default { };
 

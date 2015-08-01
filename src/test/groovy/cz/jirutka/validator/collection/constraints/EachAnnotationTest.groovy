@@ -24,6 +24,7 @@
 package cz.jirutka.validator.collection.constraints
 
 import cz.jirutka.validator.collection.internal.HibernateValidatorInfo
+import org.hibernate.validator.constraints.NotEmpty
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -53,6 +54,11 @@ class EachAnnotationTest extends Specification {
             EachEAN, EachLuhnCheck, EachMod10Check, EachMod11Check, EachSafeHtml
     ]
 
+    // List of @Each* annotations which are only a composition of other @Each* annotations.
+    static final COMPOSITE_CONSTRAINTS = [
+            EachNotEmpty
+    ]
+
 
     def 'verify that @#name is annotated with @EachConstraint(validateAs = #expValidateAsName)'() {
         expect:
@@ -61,18 +67,26 @@ class EachAnnotationTest extends Specification {
             def validateAs = constraint.getAnnotation(EachConstraint).validateAs()
             constraint.simpleName == /Each${validateAs.simpleName}/
         where:
-            constraint << eachConstraints
+            constraint << (eachConstraints - COMPOSITE_CONSTRAINTS)
             name = constraint.simpleName
             expValidateAsName = name.replaceFirst('^Each', '') + '.class'
     }
 
-    def 'verify that #constraint.simpleName contains all attributes from its validateAs constraint'() {
+    def 'verify that #constraint.simpleName defines same attributes as its validateAs constraint'() {
         setup:
            def validateAs = constraint.getAnnotation(EachConstraint).validateAs()
         expect:
             attributesTypesSet(constraint).containsAll attributesTypesSet(validateAs)
         where:
-            constraint << eachConstraints
+            constraint << (eachConstraints - COMPOSITE_CONSTRAINTS)
+    }
+
+    def 'verify that @#constraint.simpleName defines same attributes as #validateAs.simpleName'() {
+        expect:
+            attributesTypesSet(constraint).containsAll attributesTypesSet(validateAs)
+        where:
+            constraint           | validateAs
+            EachNotEmpty         | NotEmpty
     }
 
     def 'validate @#constraint.simpleName on collection of #type'() {
@@ -108,7 +122,9 @@ class EachAnnotationTest extends Specification {
             EachMod10Check  | [:]                       | ['123']            | ['123', '124']
             EachMod11Check  | [:]                       | ['124']            | ['124', '125']
             EachNotBlank    | [:]                       | ['foo', 'bar']     | ['foo', '']
-            //EachNotEmpty   | [:]                       | ['x', 'yz']        | ['x', '']  FIXME!
+            EachNotEmpty    | [:]                       | ['x', 'yz']        | ['x', '']
+            EachNotEmpty    | [:]                       | [[1], [2, 3]]      | [[1], []]
+            EachNotEmpty    | [:]                       | [[a: 1], [b: 2]]   | [[a: 1], [:]]
             EachNotNull     | [:]                       | ['foo', 'bar']     | ['foo', null]
             EachPast        | [:]                       | [pastDate()]       | [futureDate()]
             EachPattern     | [regexp: '[A-Z]+']        | ['FOO', 'BAR']     | ['FOO', '123']
@@ -126,7 +142,7 @@ class EachAnnotationTest extends Specification {
     //////// Helpers ////////
 
     static getEachConstraints() {
-        CONSTRAINTS_JSR + CONSTRAINTS_HV + (HV_VERSION >= 5_1_0 ? CONSTRAINTS_5_1_0 : [])
+        (CONSTRAINTS_JSR + CONSTRAINTS_HV + (HV_VERSION >= 5_1_0 ? CONSTRAINTS_5_1_0 : [])).toSet()
     }
 
     def attributesTypesSet(Class annotation) {
