@@ -47,13 +47,14 @@ class EachAnnotationIT extends Specification {
 
     // List of @Each* annotations for Hibernate constraints in HV 4.3.0.
     static final CONSTRAINTS_HV = [
-            EachCreditCardNumber, EachEmail, EachLength, EachNotBlank,
-            EachNotEmpty, EachRange, EachScriptAssert, EachURL
+            EachEmail, EachLength, EachNotBlank, EachNotEmpty, EachRange,
+            EachScriptAssert, EachURL
     ]
 
     // List of @Each* annotations for Hibernate constraints in HV 5.1.0 and newer.
     static final CONSTRAINTS_5_1_0 = [
-            EachEAN, EachLuhnCheck, EachMod10Check, EachMod11Check, EachSafeHtml
+            EachCreditCardNumber, EachEAN, EachLuhnCheck, EachMod10Check,
+            EachMod11Check, EachSafeHtml
     ]
 
     // List of @Each* annotations which are only a composition of other @Each* annotations.
@@ -84,6 +85,9 @@ class EachAnnotationIT extends Specification {
     }
 
     def 'verify that @#constraint.simpleName defines same attributes as #validateAs.simpleName'() {
+        setup:
+            // skip test for constraints that doesn't work in the current HV version
+            if (!eachConstraints.contains(constraint)) return
         expect:
             attributesTypesSet(constraint).containsAll attributesTypesSet(validateAs)
         where:

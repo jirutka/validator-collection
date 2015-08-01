@@ -35,6 +35,13 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
+ * Note: Constraint {@link org.hibernate.validator.constraints.CreditCardNumber CreditCardNumber}
+ * was available even in Hibernate Validator 4.3.1, but it was composed from now deprecated
+ * {@link org.hibernate.validator.constraints.ModCheck ModCheck} instead of
+ * {@link org.hibernate.validator.constraints.LuhnCheck LuhnCheck}.Therefore this annotation
+ * doesn't work in HV older than 5.1.0.
+ *
+ * @since Hibernate Validator 5.1.0
  * @see org.hibernate.validator.constraints.CreditCardNumber
  */
 @Documented
