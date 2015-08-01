@@ -98,6 +98,12 @@ Requirements
 Please note that on older versions some Hibernate specific constraints doesn’t exist, so their `@EachX` annotations will
 not work (e.g. `@EachEAN`, `@EachMod10Check`, …). It’s described in JavaDoc.
 
+### Version detection
+
+In order to support multiple versions of Hibernate Validator at a time, we attempt to determine what version is being
+used at runtime using the package metadata for the `HibernateValidator` class. This can sometimes fail, particularly if
+your project creates an “uber JAR.” If the version cannot be detected, then it fallbacks to ≥ 5.1.0.
+
 
 License
 -------
