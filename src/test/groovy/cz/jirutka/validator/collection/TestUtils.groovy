@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2015 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,8 @@ package cz.jirutka.validator.collection
 import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor
 import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory
 
+import javax.validation.Validation
+
 class TestUtils {
 
     static evalClassWithConstraint(annotationLine, List values) {
@@ -44,12 +46,20 @@ class TestUtils {
         new GroovyClassLoader().parseClass(template).newInstance()
     }
 
+    static evalClassWithConstraint(Class annotationType, Map attributes, List values) {
+        evalClassWithConstraint(createAnnotationString(annotationType, attributes), values)
+    }
+
     static toLiteral(value) {
         switch (value) {
             case null    : return null
-            case Number  : // go to next
-            case Boolean : return String.valueOf(value)
-            default      : return "'${value.toString()}'"
+            case String  : return "'${value.toString()}'"
+            case Long    : return "${value}L"
+            case List    : return '[' + value.collect { toLiteral(it) }.join(', ') + ']'
+            case Map     : return '[' + value.collect { k, v -> "${k}: ${ toLiteral(v) }" }.join(',') + ']'
+            case Enum    : return "${value.declaringClass.name}.${value.name()}"
+            case Date    : return "new Date(${toLiteral(value.time)})"
+            default      : return String.valueOf(value)
         }
     }
 
@@ -60,5 +70,14 @@ class TestUtils {
     static createAnnotation(Map attributes=[:], Class annotationType) {
         def desc = AnnotationDescriptor.getInstance(annotationType, attributes)
         AnnotationFactory.create(desc)
+    }
+
+    static createAnnotationString(Class annotationType, Map attributes) {
+        def attrsLine = attributes.collect { k, v -> "${k}=${toLiteral(v)}" }.join(', ')
+        "@${annotationType.name}(${attrsLine})"
+    }
+
+    static validate(entity) {
+        Validation.buildDefaultValidatorFactory().validator.validate(entity)
     }
 }

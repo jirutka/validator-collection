@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2015 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,16 +29,13 @@ import spock.lang.Issue
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import javax.validation.Validation
-
 import static cz.jirutka.validator.collection.TestUtils.evalClassWithConstraint
+import static cz.jirutka.validator.collection.TestUtils.validate
 
 @Unroll
 class CommonEachValidatorIT extends Specification {
 
     static HV_VERSION = HibernateValidatorInfo.getVersion()
-
-    def validator = Validation.buildDefaultValidatorFactory().getValidator()
 
     def constraint = null
 
@@ -140,10 +137,6 @@ class CommonEachValidatorIT extends Specification {
 
 
     //////// Helpers ////////
-
-    def validate(entity) {
-        validator.validate(entity)
-    }
 
     void assertViolations(Object value, boolean shouldBeValid, Integer invalidIndex, String expectedMessage) {
         def entity = evalClassWithConstraint(constraint, value)
