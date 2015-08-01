@@ -8,6 +8,6 @@ env:
   - HV_VERSION=5.0.3.Final
   - HV_VERSION=5.1.1.Final
 script:
-  - "mvn verify -B -Ptest-different-hv-version"
+  - "mvn verify -B -Ptest-different-hv-version -Dhibernate-validator.version.test=${HV_VERSION}"
 after_success:
   - 'mvn jacoco:report coveralls:jacoco'
