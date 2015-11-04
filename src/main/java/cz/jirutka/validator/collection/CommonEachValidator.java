@@ -92,7 +92,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         validatorInstances = new ConcurrentHashMap<>(2);
 
         if (eachAType.isAnnotationPresent(EachConstraint.class)) {
-            final EachConstraint eachConstraint = eachAType.getAnnotation(EachConstraint.class);
+            EachConstraint eachConstraint = eachAType.getAnnotation(EachConstraint.class);
             Class constraintClass = eachConstraint.validateAs();
 
             Annotation constraint = createConstraintAndCopyAttributes(constraintClass, eachAnnotation);
