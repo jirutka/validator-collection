@@ -77,6 +77,8 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
     // after initialization it's read-only
     private boolean earlyInterpolation = false;
 
+    // after initialization it's read-only
+    private boolean stopAfterFoundFirstInvalidField = true;
 
     public void initialize(Annotation eachAnnotation) {
 
@@ -90,12 +92,14 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         validatorInstances = new ConcurrentHashMap<>(2);
 
         if (eachAType.isAnnotationPresent(EachConstraint.class)) {
-            Class constraintClass = eachAType.getAnnotation(EachConstraint.class).validateAs();
+            final EachConstraint eachConstraint = eachAType.getAnnotation(EachConstraint.class);
+            Class constraintClass = eachConstraint.validateAs();
 
             Annotation constraint = createConstraintAndCopyAttributes(constraintClass, eachAnnotation);
             ConstraintDescriptor descriptor = createConstraintDescriptor(constraint);
 
             descriptors = unmodifiableList(asList(descriptor));
+            stopAfterFoundFirstInvalidField = eachConstraint.stopAfterFoundFirstInvalidField();
 
         // legacy and deprecated, will be removed in next major version!
         } else if (isWrapperAnnotation(eachAType)) {
@@ -131,6 +135,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         }
         context.disableDefaultConstraintViolation();  //do not add wrapper's message
 
+        boolean valid = true;
         int index = 0;
         for (Iterator<?> it = collection.iterator(); it.hasNext(); index++) {
             Object element = it.next();
@@ -153,11 +158,14 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
                             : AnnotationUtils.readAttribute(descriptor.getAnnotation(), "message", String.class);
 
                     addConstraintViolationInIterable(context, message, index);
-                    return false;
+                    if (stopAfterFoundFirstInvalidField) {
+                        return false;
+                    }
+                    valid = false;
                 }
             }
         }
-        return true;
+        return valid;
     }
 
     public void setValidatorFactory(ValidatorFactory factory) {

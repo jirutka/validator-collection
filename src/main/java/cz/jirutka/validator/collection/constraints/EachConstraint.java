@@ -47,4 +47,9 @@ public @interface EachConstraint {
      * will be validated with the validator of this constraint.
      */
     Class<? extends Annotation> validateAs();
+
+    /**
+     * Indicates whether stop the validation after first invalid field found.
+     */
+    boolean stopAfterFoundFirstInvalidField() default true;
 }
