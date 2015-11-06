@@ -162,8 +162,14 @@ class CommonEachValidatorIT extends Specification {
             assert violations.isEmpty() == shouldBeValid
 
             if (!shouldBeValid) {
-                assert violations.size() == invalidIndexes.size()
+                if(HV_VERSION >= 5_0_0) {
+                    assert violations.size() == invalidIndexes.size()
+                } else {
+                    assert violations.size() == 1
+                }
                 for (violation in violations) {
+                    def next = violation.propertyPath.iterator().next()
+                    println next.key;
                     if (violation.propertyPath.toString() == propertyPath) {
                         assert violation.invalidValue == value
                         assert violation.rootBean.is(entity)
