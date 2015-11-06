@@ -135,23 +135,43 @@ class CommonEachValidatorIT extends Specification {
             ['ab', 'cd'] | 'valid values'   || true
     }
 
+    def 'validate @EachX for dont stop after found first invalid field [ #desc ]'() {
+        given:
+            constraint = '@EachNotNullAll'
+        expect:
+            assertViolations values, isValid, invalidIndexes, 'may not be null'
+        where:
+            values            | desc               || isValid || invalidIndexes
+            ['a', null, null] | '2 invalid values' || false   || [1, 2]
+            ['a', null, 'c']  | 'an invalid value' || false   || [1]
+            ['a', 'b', 'c']   | 'not null values'  || true    || []
+    }
 
     //////// Helpers ////////
 
     void assertViolations(Object value, boolean shouldBeValid, Integer invalidIndex, String expectedMessage) {
+        assertViolations(value, shouldBeValid, [ invalidIndex ], expectedMessage)
+    }
+
+    void assertViolations(Object value, boolean shouldBeValid, List<Integer> invalidIndexes, String expectedMessage) {
         def entity = evalClassWithConstraint(constraint, value)
-        def propertyPath = HV_VERSION >= 5_0_0 ? "valuesList[${invalidIndex}]" : 'valuesList'
-        def violations = validate(entity)
+        for (invalidIndex in invalidIndexes) {
+            def propertyPath = HV_VERSION >= 5_0_0 ? "valuesList[${invalidIndex}]" : 'valuesList'
+            def violations = validate(entity)
 
-        assert violations.isEmpty() == shouldBeValid
+            assert violations.isEmpty() == shouldBeValid
 
-        if (!shouldBeValid) {
-            assert violations.size() == 1
-            assert violations[0].invalidValue == value
-            assert violations[0].propertyPath.toString() == propertyPath
-            assert violations[0].rootBean.is(entity)
-            assert violations[0].rootBeanClass == entity.class
-            assert violations[0].message == expectedMessage
+            if (!shouldBeValid) {
+                assert violations.size() == invalidIndexes.size()
+                for (violation in violations) {
+                    if (violation.propertyPath.toString() == propertyPath) {
+                        assert violation.invalidValue == value
+                        assert violation.rootBean.is(entity)
+                        assert violation.rootBeanClass == entity.class
+                        assert violation.message == expectedMessage
+                    }
+                }
+            }
         }
     }
 }
