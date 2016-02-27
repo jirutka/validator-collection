@@ -11,3 +11,7 @@ trim_trailing_whitespace = true
 
 [*.yml]
 indent_size = 2
+
+[script/*]
+indent_size = 4
+indent_style = tab

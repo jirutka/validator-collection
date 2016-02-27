@@ -4,10 +4,13 @@ jdk:
   - openjdk7
   - oraclejdk8
 env:
-  - HV_VERSION=4.3.1.Final
-  - HV_VERSION=5.0.3.Final
-  - HV_VERSION=5.1.3.Final
-  - HV_VERSION=5.2.3.Final
+  global:
+    secure: "KncKGamS99AWFQNs2L4a3s65BdNvP07yD/fulNZA+tsBNVLgxsieXkRdzrA5Efxbd5PvnBJuLkYgjPFSFh4uPNwijH5PnZMsSYlnSFIbLyGAIkWx2cJeUoDXOOrbHIeRmCDS6gZjs9sUZHrVlhF9B/19txf4XUjpd/6slqdsEng="  # BINTRAY_API_KEY
+  matrix:
+    - HV_VERSION=4.3.1.Final
+    - HV_VERSION=5.0.3.Final
+    - HV_VERSION=5.1.3.Final
+    - HV_VERSION=5.2.3.Final
 
 # Cache local Maven repository
 cache:
@@ -22,3 +25,4 @@ script:
   - mvn verify -Ptest-different-hv-version -Dhv.version.test=${HV_VERSION} --batch-mode
 after_success:
   - mvn jacoco:report coveralls:report
+  - script/travis-deploy
