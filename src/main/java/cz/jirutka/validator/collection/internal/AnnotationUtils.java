@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2016 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -76,7 +76,7 @@ public abstract class AnnotationUtils {
 
         } catch (NoSuchMethodException ex) {
             throw new IllegalArgumentException(String.format(
-                    "No such attribute %s in %s", attributeName, annotationType.getName()));
+                    "No such attribute %s in %s", attributeName, annotationType.getName()), ex);
         }
     }
 
@@ -153,7 +153,8 @@ public abstract class AnnotationUtils {
             return clazz.getMethod(methodName).invoke(object);
 
         } catch (NoSuchMethodException ex) {
-            throw new IllegalArgumentException(String.format("Class should declare method %s()", methodName));
+            throw new IllegalArgumentException(
+                    String.format("Class should declare method %s()", methodName), ex);
 
         } catch (InvocationTargetException | IllegalAccessException ex) {
             throw new IllegalStateException(ex);

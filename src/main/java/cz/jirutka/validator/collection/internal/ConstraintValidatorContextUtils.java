@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2016 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@ import javax.validation.ConstraintValidatorContext;
 
 public abstract class ConstraintValidatorContextUtils {
 
-    private static int HV_VERSION = HibernateValidatorInfo.getVersion();
+    private static final int HV_VERSION = HibernateValidatorInfo.getVersion();
 
     /**
      * Builds and adds a constraint violation inside an iterable value to the
