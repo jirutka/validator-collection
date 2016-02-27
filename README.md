@@ -2,6 +2,7 @@ Bean Validation / Collection Validators
 =======================================
 [![Build Status](https://travis-ci.org/jirutka/validator-collection.svg?branch=master)](https://travis-ci.org/jirutka/validator-collection)
 [![Coverage Status](https://img.shields.io/coveralls/jirutka/validator-collection/master.svg?style=flat)](https://coveralls.io/r/jirutka/validator-collection?branch=master)
+[![Codacy code quality](https://api.codacy.com/project/badge/grade/b77fcc2a16794c49a64ac0727ec274f7)](https://www.codacy.com/app/jirutka/validator-collection)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.validator/validator-collection)
 
 Neither [Bean Validation 1.1][JSR-349] (JSR 303/349) nor [Hibernate Validator], the reference _(and the only one…)_
