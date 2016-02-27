@@ -1,0 +1,125 @@
+= Bean Validation / Collection Validators
+:source-language: java
+:name: validator-collection
+:version: 2.1.6
+:artifact-id: {name}
+:group-id: cz.jirutka.validator
+:gh-name: jirutka/{name}
+:gh-branch: master
+:codacy-id: b77fcc2a16794c49a64ac0727ec274f7
+
+ifdef::env-github[]
+image:https://travis-ci.org/{gh-name}.svg?branch={gh-branch}[Build Status, link="https://travis-ci.org/{gh-name}"]
+image:https://coveralls.io/repos/github/{gh-name}/badge.svg?branch={gh-branch}[Coverage Status, link="https://coveralls.io/github/{gh-name}"]
+image:https://api.codacy.com/project/badge/grade/{codacy-id}[Code quality, link="https://www.codacy.com/app/{gh-name}"]
+image:https://maven-badges.herokuapp.com/maven-central/{group-id}/{artifact-id}/badge.svg[Maven Central, link="https://maven-badges.herokuapp.com/maven-central/{group-id}/{artifact-id}"]
+endif::env-github[]
+
+
+Neither http://beanvalidation.org/1.1/spec/[Bean Validation 1.1] (JSR 303/349) nor http://hibernate.org/validator/[Hibernate Validator], the reference _(and the only one…)_ implementation of it, provide simple way to validate a collection of basic types like String, Integer, Date… (i.e. validate each element of the collection).
+
+This library allows you to easily create a “pseudo constraint” (typically named as `@EachX`) for _any_ validation constraint to annotate a collection of simple types, without writing an extra validator or unnecessary wrapper classes for every collection.
+`EachX` constraint is supported for all standard Bean Validation constraints and Hibernate specific constraints.
+For example:
+
+[source]
+----
+@EachSize(min = 5, max = 255)
+Collection<String> values;
+
+@EachFuture
+List<Date> dates;
+
+@EachEmail
+Set<String> emails;
+----
+
+
+== How to create a custom constraint
+
+Every `@EachX` pseudo constraint uses the same validator, link:src/main/java/cz/jirutka/validator/collection/CommonEachValidator.java[CommonEachValidator].
+To create an `@EachAwesome` for your own `@Awesome` constraint, just copy & paste the annotation class (i.e. all the attributes and boilerplate meta annotations), replace `@Constraint` annotation with `@Constraint(validatedBy = CommonEachValidator.class)` and add the annotation `@EachConstraint(validateAs = Awesome.class)`.
+That’s all!
+
+[source]
+----
+// common boilerplate
+@Documented
+@Retention(RUNTIME)
+@Target({METHOD, FIELD, ANNOTATION_TYPE})
+// this is important!
+@EachConstraint(validateAs = Awesome.class)
+@Constraint(validatedBy = CommonEachValidator.class)
+public @interface EachAwesome {
+
+    // copy&paste all attributes from Awesome annotation here
+    String message() default "";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
+    String someAttribute();
+}
+----
+
+
+=== The old way
+
+The previous versions (before 2.1.0) used a different approach to write `@EachX` annotations (see https://github.com/{gh-name}/tree/v2.0.2[here]).
+It is still supported for custom constraints, but all the built-in annotations has been already updated to the new style.
+
+If you’re upgrading from an older version of Collection Validators, then you must update all built-in annotations to the new style.
+For example:
+
+[source]
+@EachSize(@Size(min = 5, max = 255)) -> @EachSize(min = 5, max = 255)
+
+You _should_ also update custom annotations.
+The old style is still supported, but may be deprecated in the future.
+
+
+== Maven
+
+Released versions are available in The Central Repository.
+Just add this artifact to your project:
+
+[source, xml, subs="verbatim, attributes"]
+----
+<dependency>
+    <groupId>{group-id}</groupId>
+    <artifactId>{artifact-id}</artifactId>
+    <version>{version}</version>
+</dependency>
+----
+
+However if you want to use the last snapshot version, you have to add the Sonatype OSS repository:
+
+[source, xml]
+----
+<repository>
+    <id>sonatype-snapshots</id>
+    <name>Sonatype repository for deploying snapshots</name>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <snapshots>
+        <enabled>true</enabled>
+    </snapshots>
+</repository>
+----
+
+
+== Requirements
+
+http://hibernate.org/validator/[Hibernate Validator] 4.3.1.Final and newer is supported, but 5.× is recommended.
+
+Please note that on older versions some Hibernate specific constraints doesn’t exist, so their `@EachX` annotations will not work (e.g. `@EachEAN`, `@EachMod10Check`, …).
+It’s described in JavaDoc.
+
+
+=== Version detection
+
+In order to support multiple versions of Hibernate Validator at a time, we attempt to determine what version is being used at runtime using the package metadata for the `HibernateValidator` class.
+This can sometimes fail, particularly if your project creates an “uber JAR.”
+If the version cannot be detected, then it fallbacks to ≥ 5.1.0.
+
+
+== License
+
+This project is licensed under http://opensource.org/licenses/MIT[MIT license].
