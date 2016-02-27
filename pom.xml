@@ -58,14 +58,6 @@
     </issueManagement>
 
 
-    <!--//////////////////// PROPERTIES ////////////////////-->
-
-    <properties>
-        <!-- Recommended version is 5.1.0 or greater. -->
-        <hibernate-validator.version>[4.3.0.Final,)</hibernate-validator.version>
-    </properties>
-
-
     <!--//////////////////// DEPENDENCIES ////////////////////-->
 
     <dependencies>
@@ -80,7 +72,8 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator.version}</version>
+            <!-- Note: Minimal supported version is 4.3.0.Final. -->
+            <version>5.2.3.Final</version>
         </dependency>
 
         <dependency>
@@ -139,18 +132,6 @@
     <!--//////////////////// PROFILES ////////////////////-->
 
     <profiles>
-        <!--
-            Release profile to build always with the same Hibernate Validator version (instead of
-            the newest available because of version range).
-        -->
-        <profile>
-            <id>release</id>
-
-            <properties>
-                <hibernate-validator.version>5.2.1.Final</hibernate-validator.version>
-            </properties>
-        </profile>
-
         <!--
             Profile to run integration tests with different version of Hibernate Validator then the
             compile version.
