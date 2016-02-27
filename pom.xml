@@ -140,8 +140,8 @@
             <id>test-different-hv-version</id>
 
             <properties>
-                <!-- Should be set from CLI: -Dhibernate-validator.version.test=VERSION -->
-                <hibernate-validator.version.test></hibernate-validator.version.test>
+                <!-- Should be set from CLI: -Dhv.version.test=VERSION -->
+                <hv.version.test></hv.version.test>
                 <dependency.directory>${project.build.directory}/dependency</dependency.directory>
             </properties>
 
@@ -160,7 +160,7 @@
                                         <item>
                                             <groupId>org.hibernate</groupId>
                                             <artifactId>hibernate-validator</artifactId>
-                                            <version>${hibernate-validator.version.test}</version>
+                                            <version>${hv.version.test}</version>
                                         </item>
                                     </artifactItems>
                                 </configuration>
@@ -175,7 +175,7 @@
                                 <exclude>org.hibernate:hibernate-validator</exclude>
                             </classpathDependencyExcludes>
                             <additionalClasspathElements>
-                                <element>${dependency.directory}/hibernate-validator-${hibernate-validator.version.test}.jar</element>
+                                <element>${dependency.directory}/hibernate-validator-${hv.version.test}.jar</element>
                             </additionalClasspathElements>
                         </configuration>
                     </plugin>
