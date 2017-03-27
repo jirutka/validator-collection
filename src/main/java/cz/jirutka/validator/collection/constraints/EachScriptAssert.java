@@ -79,4 +79,13 @@ public @interface EachScriptAssert {
      *         within the script context. Defaults to "_this".
      */
     String alias() default "_this";
+
+    /**
+     * @return The name of the property for which you would like to report a validation error.
+     * If given, the resulting constraint violation will be reported on the specified property.
+     * If not given, the constraint violation will be reported on the annotated bean.
+     *
+     * @since Hibernate Validator 5.4.0
+     */
+    String reportOn() default "";
 }
