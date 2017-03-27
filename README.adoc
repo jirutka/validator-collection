@@ -1,7 +1,7 @@
 = Bean Validation / Collection Validators
 :source-language: java
 :name: validator-collection
-:version: 2.1.6
+:version: 2.2.0
 :artifact-id: {name}
 :group-id: cz.jirutka.validator
 :gh-name: jirutka/{name}
