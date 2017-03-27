@@ -7,10 +7,12 @@ env:
   global:
     secure: "KncKGamS99AWFQNs2L4a3s65BdNvP07yD/fulNZA+tsBNVLgxsieXkRdzrA5Efxbd5PvnBJuLkYgjPFSFh4uPNwijH5PnZMsSYlnSFIbLyGAIkWx2cJeUoDXOOrbHIeRmCDS6gZjs9sUZHrVlhF9B/19txf4XUjpd/6slqdsEng="  # BINTRAY_API_KEY
   matrix:
-    - HV_VERSION=4.3.1.Final
+    - HV_VERSION=4.3.2.Final
     - HV_VERSION=5.0.3.Final
     - HV_VERSION=5.1.3.Final
-    - HV_VERSION=5.2.3.Final
+    - HV_VERSION=5.2.5.Final
+    - HV_VERSION=5.3.5.Final
+    - HV_VERSION=5.4.1.Final
 
 # Cache local Maven repository
 cache:
