@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2013-2014 Jakub Jirutka <jakub@jirutka.cz>.
+ * Copyright 2013-2016 Jakub Jirutka <jakub@jirutka.cz>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 package cz.jirutka.validator.collection;
 
 import cz.jirutka.validator.collection.constraints.EachConstraint;
-import cz.jirutka.validator.collection.internal.AnnotationUtils;
 import cz.jirutka.validator.collection.internal.ConstraintDescriptorFactory;
 import cz.jirutka.validator.collection.internal.MessageInterpolatorContext;
 import org.apache.commons.lang3.Validate;
@@ -75,7 +74,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
     private Map<Class, ConstraintValidator> validatorInstances;
 
     // after initialization it's read-only
-    private boolean earlyInterpolation = false;
+    private boolean earlyInterpolation;
 
     // after initialization it's read-only
     private boolean stopAfterFoundFirstInvalidField = true;
@@ -155,7 +154,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
                     // and will go away with them
                     String message = earlyInterpolation
                             ? createInterpolatedMessage(descriptor, element)
-                            : AnnotationUtils.readAttribute(descriptor.getAnnotation(), "message", String.class);
+                            : readAttribute(descriptor.getAnnotation(), "message", String.class);
 
                     addConstraintViolationInIterable(context, message, index);
                     if (stopAfterFoundFirstInvalidField) {
@@ -183,7 +182,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
     }
 
     protected Annotation[] unwrapConstraints(Annotation wrapper) {
-        return AnnotationUtils.readAttribute(wrapper, "value", Annotation[].class);
+        return readAttribute(wrapper, "value", Annotation[].class);
     }
 
     protected ConstraintDescriptor createConstraintDescriptor(Annotation constraint) {
@@ -246,12 +245,13 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         LOG.trace("Looking for validator for type: {}", type.getName());
 
         for (Class<?> clazz : validators.keySet()) {
-            if (! clazz.isAssignableFrom(type)) continue;
+            if (clazz.isAssignableFrom(type)) {
 
-            Class validatorClass = validators.get(clazz);
+                Class validatorClass = validators.get(clazz);
 
-            LOG.trace("Initializing validator: {}", validatorClass.getName());
-            return factory.getConstraintValidatorFactory().getInstance(validatorClass);
+                LOG.trace("Initializing validator: {}", validatorClass.getName());
+                return factory.getConstraintValidatorFactory().getInstance(validatorClass);
+            }
         }
         throw new IllegalArgumentException("No validator found for type: " + type.getName());
     }
@@ -268,7 +268,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
         Context context = new MessageInterpolatorContext(descriptor, value);
 
         Annotation constraint = descriptor.getAnnotation();
-        String template = AnnotationUtils.readAttribute(constraint, "message", String.class);
+        String template = readAttribute(constraint, "message", String.class);
 
         return factory.getMessageInterpolator().interpolate(template, context);
     }

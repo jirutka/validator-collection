@@ -1,0 +1,12 @@
+#!/bin/sh
+# vim: set ts=4:
+set -e
+
+cd "$(dirname "$0")/.."
+
+if [ -z "$BINTRAY_API_KEY" ]; then
+	echo '$BINTRAY_API_KEY is not set, skipping deploy.'; exit 0
+fi
+
+echo '==> Deploying artifact to JFrog OSS Maven repository'
+mvn deploy --settings .maven-bintray.xml -Dgpg.skip=true -DskipTests=true
