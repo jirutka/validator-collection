@@ -77,7 +77,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
     private boolean earlyInterpolation;
 
     // after initialization it's read-only
-    private boolean stopAfterFoundFirstInvalidField = true;
+    private boolean failFast = true;
 
     public void initialize(Annotation eachAnnotation) {
 
@@ -98,7 +98,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
             ConstraintDescriptor descriptor = createConstraintDescriptor(constraint);
 
             descriptors = unmodifiableList(asList(descriptor));
-            stopAfterFoundFirstInvalidField = eachConstraint.stopAfterFoundFirstInvalidField();
+            failFast = eachConstraint.failFast();
 
         // legacy and deprecated, will be removed in next major version!
         } else if (isWrapperAnnotation(eachAType)) {
@@ -157,7 +157,7 @@ public class CommonEachValidator implements ConstraintValidator<Annotation, Coll
                             : readAttribute(descriptor.getAnnotation(), "message", String.class);
 
                     addConstraintViolationInIterable(context, message, index);
-                    if (stopAfterFoundFirstInvalidField) {
+                    if (failFast) {
                         return false;
                     }
                     valid = false;

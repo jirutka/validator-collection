@@ -43,7 +43,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE})
-@EachConstraint(validateAs = NotNull.class, stopAfterFoundFirstInvalidField = false)
+@EachConstraint(validateAs = NotNull.class, failFast = false)
 @Constraint(validatedBy = CommonEachValidator.class)
 public @interface EachNotNullAll {
 

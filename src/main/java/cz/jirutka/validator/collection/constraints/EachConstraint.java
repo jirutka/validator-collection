@@ -51,5 +51,5 @@ public @interface EachConstraint {
     /**
      * Indicates whether stop the validation after first invalid field found.
      */
-    boolean stopAfterFoundFirstInvalidField() default true;
+    boolean failFast() default true;
 }
