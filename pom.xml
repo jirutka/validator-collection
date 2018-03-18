@@ -66,6 +66,7 @@
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
             <version>1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- JSR-349 Bean Validator -->
@@ -74,6 +75,7 @@
             <artifactId>hibernate-validator</artifactId>
             <!-- Note: Minimal supported version is 4.3.0.Final. -->
             <version>5.4.1.Final</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
