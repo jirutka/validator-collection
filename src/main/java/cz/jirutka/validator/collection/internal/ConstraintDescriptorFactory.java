@@ -67,7 +67,23 @@ public abstract class ConstraintDescriptorFactory {
 
         int version = HibernateValidatorInfo.getVersion();
 
-        if (version >= 5_1_0) {
+        if (version >= 6_0_0) {
+            try {
+                final Class<?> descriptorClass
+                    = Class.forName("org.hibernate.validator.internal.util.annotation.AnnotationDescriptor");
+                return new ConstraintDescriptorFactory() {
+                    Class[] getConstructorArguments() {
+                        return new Class[]{ConstraintHelper.class, Member.class, descriptorClass, ElementType.class};
+                    }
+                    ConstraintDescriptorImpl newInstance(Annotation annotation) throws ReflectiveOperationException {
+                        final Object descriptor = descriptorClass.getConstructor(Annotation.class).newInstance(annotation);
+                        return constructor.newInstance(CONSTRAINT_HELPER, null, descriptor, ElementType.LOCAL_VARIABLE);
+                    }
+                };
+            } catch (ClassNotFoundException ex) {
+                throw new IllegalStateException(ex);
+            }
+        } else if (version >= 5_1_0) {
             return new ConstraintDescriptorFactory() {
                 Class[] getConstructorArguments() {
                     return new Class[]{ ConstraintHelper.class, Member.class, Annotation.class, ElementType.class };

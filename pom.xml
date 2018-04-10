@@ -73,7 +73,7 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <!-- Note: Minimal supported version is 4.3.0.Final. -->
-            <version>5.4.1.Final</version>
+            <version>6.0.4.Final</version>
         </dependency>
 
         <dependency>
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>javax.el-api</artifactId>
-            <version>2.2.4</version>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
 

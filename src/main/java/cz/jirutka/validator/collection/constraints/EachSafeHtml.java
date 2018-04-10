@@ -71,4 +71,11 @@ public @interface EachSafeHtml {
      * @since Hibernate Validator 5.1.0
      */
     Tag[] additionalTagsWithAttributes() default { };
+
+    /**
+     * @return Base URI used to resolve relative URIs to absolute ones. If not set, validation
+     * of HTML containing relative URIs will fail.
+     * @since Hibernate Validator 6.0.0
+     */
+    String baseURI() default "";
 }

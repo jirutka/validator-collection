@@ -41,7 +41,7 @@ class AnnotationUtilsTest extends Specification {
     def "readAttribute: return attribute's value"() {
         given:
             def attrs = value != null ? [(name): value] : [:]
-            def annotation = TestUtils.createAnnotation(Size, attrs)
+            def annotation = createAnnotationInternal(Size, attrs)
         expect:
             readAttribute(annotation, name, reqType) == expected
         where:
@@ -86,7 +86,7 @@ class AnnotationUtilsTest extends Specification {
     def 'readAllAttributes: return attributes as map'() {
         given:
             def attrs = [message: 'allons-y!', max: 10]
-            def annotation = TestUtils.createAnnotation(Size, attrs)
+            def annotation = createAnnotationInternal(Size, attrs)
             def expected = [groups: [], payload: [], min: 0] + attrs
         expect:
             readAllAttributes(annotation) == expected
