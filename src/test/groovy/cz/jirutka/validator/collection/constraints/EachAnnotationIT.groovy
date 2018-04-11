@@ -26,10 +26,11 @@ package cz.jirutka.validator.collection.constraints
 import cz.jirutka.validator.collection.internal.HibernateValidatorInfo
 import org.apache.commons.lang3.ClassUtils
 import org.hibernate.validator.constraints.CreditCardNumber
-import org.hibernate.validator.constraints.NotEmpty
 import org.hibernate.validator.constraints.Range
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import javax.validation.constraints.NotEmpty
 
 import static cz.jirutka.validator.collection.TestUtils.evalClassWithConstraint
 import static cz.jirutka.validator.collection.TestUtils.validate
@@ -41,21 +42,27 @@ class EachAnnotationIT extends Specification {
 
     // List of @Each* annotations for constraints defined in JSR 303/349.
     static final CONSTRAINTS_JSR = [
-            EachAssertFalse, EachAssertTrue, EachDecimalMax, EachDecimalMin,
-            EachDigits, EachFuture, EachMax, EachMin, EachNotNull, EachPast,
-            EachPattern, EachSize
+            EachAssertFalse, EachAssertTrue, EachDecimalMax, EachDecimalMin, EachDigits,
+            EachEmail, EachFuture, EachFutureOrPresent, EachMax, EachMin, EachNegative,
+            EachNegativeOrZero, EachNotBlank, EachNotNull, EachNull, EachPast,
+            EachPastOrPresent, EachPattern, EachPositive, EachPositiveOrZero, EachSize
     ]
 
     // List of @Each* annotations for Hibernate constraints in HV 4.3.0.
     static final CONSTRAINTS_HV = [
-            EachEmail, EachLength, EachNotBlank, EachNotEmpty, EachRange,
-            EachScriptAssert, EachURL
+            EachLength, EachNotBlank, EachNotEmpty, EachRange, EachScriptAssert,
+            EachURL
     ]
 
     // List of @Each* annotations for Hibernate constraints in HV 5.1.0 and newer.
     static final CONSTRAINTS_5_1_0 = [
             EachCreditCardNumber, EachEAN, EachLuhnCheck, EachMod10Check,
             EachMod11Check, EachSafeHtml
+    ]
+
+    // List of @Each* annotations for Hibernate constraints in HV 6.0.3 and newer.
+    static final CONSTRAINTS_6_0_3 = [
+            EachCodePointLength
     ]
 
     // List of @Each* annotations which are only a composition of other @Each* annotations.
@@ -112,6 +119,7 @@ class EachAnnotationIT extends Specification {
             constraint      | attributes                | validValue         | invalidValue
             EachAssertFalse | [:]                       | [false, false]     | [false, true]
             EachAssertTrue  | [:]                       | [true, true]       | [true, false]
+            EachCodePointLength | [min: 1, max: 2]      | ['a', 'ab', 'a𝔊']  | ['abc', 'ab𝔊', 'क्तु']
             EachCreditCardNumber | [:]                  | ['79927398713']    | ['79927398714']
             EachDecimalMax  | [value: '3']              | [1, 2, 3]          | [2, 3, 4]
             EachDecimalMax  | [value: '3']              | ['1', '2', '3']    | ['2', '3', '4']
@@ -121,7 +129,8 @@ class EachAnnotationIT extends Specification {
             EachDigits      | [integer: 2, fraction: 1] | ['42.1', '13.2']   | ['42.1', '3.14']
             EachEAN         | [:]                       | ['1234567890128']  | ['1234567890128', '66']
             EachEmail       | [:]                       | ['x@y.z', 'a@b.c'] | ['x@y.z', 'ab.c']
-            EachFuture      | [:]                       | [futureDate()]     | [pastDate()]
+            EachFuture      | [:]                       | [futureDate()]     | [pastDate(), currentDate()]
+            EachFutureOrPresent | [:]                   | [futureDate()]     | [pastDate()] // currentDate() is too late for present
             EachLength      | [min: 1, max: 3]          | ['a', 'foo']       | ['a', 'allons-y!']
             EachLuhnCheck   | [:]                       | ['79927398713']    | ['79927398714']
             EachMax         | [value: 3L]               | [1, 2, 3]          | [2, 3, 4]
@@ -130,13 +139,19 @@ class EachAnnotationIT extends Specification {
             EachMin         | [value: 3L]               | ['3', '4', '5']    | ['1', '2', '3']
             EachMod10Check  | [:]                       | ['123']            | ['123', '124']
             EachMod11Check  | [:]                       | ['124']            | ['124', '125']
+            EachNegative    | [:]                       | [-1, -2, -3]       | [0, 1, 2]
+            EachNegativeOrZero | [:]                    | [0, -1, -2]        | [1, 2, 3]
             EachNotBlank    | [:]                       | ['foo', 'bar']     | ['foo', '']
             EachNotEmpty    | [:]                       | ['x', 'yz']        | ['x', '']
             EachNotEmpty    | [:]                       | [[1], [2, 3]]      | [[1], []]
             EachNotEmpty    | [:]                       | [[a: 1], [b: 2]]   | [[a: 1], [:]]
             EachNotNull     | [:]                       | ['foo', 'bar']     | ['foo', null]
-            EachPast        | [:]                       | [pastDate()]       | [futureDate()]
+            EachNull        | [:]                       | [null, null]       | ['foo', null]
+            EachPast        | [:]                       | [pastDate(), currentDate()] | [futureDate()]
+            EachPastOrPresent | [:]                     | [pastDate(), currentDate()] | [futureDate()]
             EachPattern     | [regexp: '[A-Z]+']        | ['FOO', 'BAR']     | ['FOO', '123']
+            EachPositive    | [:]                       | [1, 2, 3]          | [0, -1, -2]
+            EachPositiveOrZero | [:]                    | [0, 1, 2]          | [-1, -2, -3]
             EachRange       | [min: 3L, max: 6L]        | [3, 4, 5]          | [6, 7, 8]
             EachRange       | [min: 3L, max: 6L]        | ['3', '4', '5']    | ['6', '7', '8']
             EachSafeHtml    | [:]                       | ['<b>foo</b>']     | ['<x>WAT?</x>']
@@ -153,7 +168,10 @@ class EachAnnotationIT extends Specification {
     //////// Helpers ////////
 
     static getEachConstraints() {
-        (CONSTRAINTS_JSR + CONSTRAINTS_HV + (HV_VERSION >= 5_1_0 ? CONSTRAINTS_5_1_0 : [])).toSet()
+        (CONSTRAINTS_JSR + CONSTRAINTS_HV + (
+            HV_VERSION >= 6_0_3 ? CONSTRAINTS_5_1_0 + CONSTRAINTS_6_0_3
+            : HV_VERSION >= 5_1_0 ? CONSTRAINTS_5_1_0
+            : [])).toSet()
     }
 
     def attributesTypesSet(Class annotation) {
@@ -164,6 +182,10 @@ class EachAnnotationIT extends Specification {
 
     def futureDate() {
         new Date().plus(1)
+    }
+
+    def currentDate() {
+        new Date()
     }
 
     def pastDate() {

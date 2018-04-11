@@ -76,7 +76,9 @@ public abstract class ConstraintDescriptorFactory {
                         return new Class[]{ConstraintHelper.class, Member.class, descriptorClass, ElementType.class};
                     }
                     ConstraintDescriptorImpl newInstance(Annotation annotation) throws ReflectiveOperationException {
-                        final Object descriptor = descriptorClass.getConstructor(Annotation.class).newInstance(annotation);
+                        final Object descriptor = descriptorClass
+                            .getConstructor(Annotation.class)
+                            .newInstance(annotation);
                         return constructor.newInstance(CONSTRAINT_HELPER, null, descriptor, ElementType.LOCAL_VARIABLE);
                     }
                 };

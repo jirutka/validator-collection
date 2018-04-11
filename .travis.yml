@@ -13,6 +13,7 @@ env:
     - HV_VERSION=5.2.5.Final
     - HV_VERSION=5.3.5.Final
     - HV_VERSION=5.4.1.Final
+    - HV_VERSION=6.0.4.Final
 
 # Cache local Maven repository
 cache:

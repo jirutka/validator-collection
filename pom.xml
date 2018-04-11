@@ -58,6 +58,13 @@
     </issueManagement>
 
 
+    <!--//////////////////// PROPERTIES ////////////////////-->
+    <properties>
+        <!-- Note: Should be updated in parent pom. (Fixes Java 8 annotation target TYPE_USE in tests) -->
+        <groovy.version>2.4.15</groovy.version>
+    </properties>
+
+
     <!--//////////////////// DEPENDENCIES ////////////////////-->
 
     <dependencies>

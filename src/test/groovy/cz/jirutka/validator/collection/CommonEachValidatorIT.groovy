@@ -35,6 +35,10 @@ import static cz.jirutka.validator.collection.TestUtils.validate
 @Unroll
 class CommonEachValidatorIT extends Specification {
 
+    static {
+        Locale.setDefault(new Locale("en", "US"))
+    }
+
     static HV_VERSION = HibernateValidatorInfo.getVersion()
 
     def constraint = null
@@ -72,7 +76,7 @@ class CommonEachValidatorIT extends Specification {
         given:
             constraint = '@EachNotNull'
         expect:
-            assertViolations values, isValid, 1, 'may not be null'
+            assertViolations values, isValid, 1, 'must not be null'
         where:
             values      | desc              || isValid
             ['a', null] | 'a null value'    || false
@@ -96,7 +100,7 @@ class CommonEachValidatorIT extends Specification {
         given:
             constraint = '@EachNotBlank'
         expect:
-            assertViolations values, isValid, invalidIndex, 'may not be empty'
+            assertViolations values, isValid, invalidIndex, 'must not be empty'
         where:
             values        | desc                               || isValid | invalidIndex
             ['']          | 'value invalid by top validator'   || false   | 0

@@ -141,7 +141,19 @@ public abstract class AnnotationUtils {
         return createAnnotationInternal(annotationType, attributes);
     }
 
-    public static <T extends Annotation> T createAnnotationInternal(Class<T> annotationType, Map<String, Object> attributes) {
+    /**
+     * Creates an annotation instance using the respective constructor for each HV version.
+     * This is required to support both version 4.3-5.X and 6.0.0
+     *
+     * @param annotationType The annotation's class.
+     * @param attributes A map with attribute values for the annotation to be created.
+     * @param <T> The type of the annotation.
+     *
+     * @return An instance of the annotation.
+     * @throws IllegalStateException if the required constructor classes or methods are not found.
+     */
+    public static <T extends Annotation> T createAnnotationInternal(Class<T> annotationType,
+            Map<String, Object> attributes) {
         try {
             final Object descriptor;
             final Class<?> annotationDescriptorClass;
