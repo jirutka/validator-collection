@@ -24,11 +24,11 @@
 package cz.jirutka.validator.collection.constraints;
 
 import cz.jirutka.validator.collection.CommonEachValidator;
+import org.hibernate.validator.constraints.CodePointLength;
+import org.hibernate.validator.constraints.CodePointLength.NormalizationStrategy;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -37,15 +37,16 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * @see Email
+ * @since Hibernate Validator 6.0.3
+ * @see CodePointLength
  * @see CommonEachValidator
  */
 @Documented
 @Retention(RUNTIME)
-@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
-@EachConstraint(validateAs = Email.class)
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
+@EachConstraint(validateAs = CodePointLength.class)
 @Constraint(validatedBy = CommonEachValidator.class)
-public @interface EachEmail {
+public @interface EachCodePointLength {
 
     String message() default "";
 
@@ -53,13 +54,9 @@ public @interface EachEmail {
 
     Class<? extends Payload>[] payload() default { };
 
-    /**
-     * @return an additional regular expression the annotated string must match. The default is any string ('.*')
-     */
-    String regexp() default ".*";
+    int min() default 0;
 
-    /**
-     * @return used in combination with {@link #regexp()} in order to specify a regular expression option
-     */
-    Pattern.Flag[] flags() default { };
+    int max() default Integer.MAX_VALUE;
+
+    NormalizationStrategy normalizationStrategy() default NormalizationStrategy.NONE;
 }

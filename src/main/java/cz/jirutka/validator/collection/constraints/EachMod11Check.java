@@ -55,7 +55,8 @@ public @interface EachMod11Check {
     Class<? extends Payload>[] payload() default { };
 
     /**
-     * @return The threshold for the Mod11 algorithm multiplier growth, if no value is specified the multiplier will grow indefinitely
+     * @return The threshold for the Mod11 algorithm multiplier growth, if no value is specified the multiplier will
+     * grow indefinitely
      */
     int threshold() default Integer.MAX_VALUE;
 
@@ -71,8 +72,8 @@ public @interface EachMod11Check {
 
     /**
      * @return The index of the check digit in the input. Per default it is assumed that the check digit is the last
-     * digit of the specified range. If set, the digit at the specified index is used. If set
-     * the following must hold true:<br/>
+     * digit of the specified range. If set, the digit at the specified index is used. If set the following must hold
+     * true:<br/>
      * {@code checkDigitIndex > 0 && (checkDigitIndex < startIndex || checkDigitIndex >= endIndex}.
      */
     int checkDigitIndex() default -1;
@@ -96,7 +97,8 @@ public @interface EachMod11Check {
     char treatCheck11As() default '0';
 
     /**
-     * @return Returns {@code RIGHT_TO_LEFT} if the Mod11 checksum must be done from the rightmost to the leftmost digit.
+     * @return Returns {@code RIGHT_TO_LEFT} if the Mod11 checksum must be done from the rightmost to the leftmost
+     * digit.
      * e.g. Code 12345-?:
      * <ul>
      * <li>{@code RIGHT_TO_LEFT} the sum (5*2 + 4*3 + 3*4 + 2*5 + 1*6) with check digit 5</li>
