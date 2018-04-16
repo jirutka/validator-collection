@@ -24,58 +24,31 @@
 package cz.jirutka.validator.collection.constraints;
 
 import cz.jirutka.validator.collection.CommonEachValidator;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.hibernate.validator.constraints.SafeHtml.Tag;
-import org.hibernate.validator.constraints.SafeHtml.WhiteListType;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
+import javax.validation.constraints.Negative;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.RELAXED;
 
 /**
- * @see SafeHtml
+ * @see Negative
  * @see CommonEachValidator
  */
 @Documented
 @Retention(RUNTIME)
-@Target({METHOD, FIELD, ANNOTATION_TYPE})
-@EachConstraint(validateAs = SafeHtml.class)
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+@EachConstraint(validateAs = Negative.class)
 @Constraint(validatedBy = CommonEachValidator.class)
-public @interface EachSafeHtml {
+public @interface EachNegative {
 
     String message() default "";
 
     Class<?>[] groups() default { };
 
     Class<? extends Payload>[] payload() default { };
-
-    /**
-     * @return The built-in whitelist type which will be applied to the rich text value
-     */
-    WhiteListType whitelistType() default RELAXED;
-
-    /**
-     * @return Additional whitelist tags which are allowed on top of the tags specified by the
-     * {@link #whitelistType()}.
-     */
-    String[] additionalTags() default { };
-
-    /**
-     * @return Allows to specify additional whitelist tags with optional attributes.
-     * @since Hibernate Validator 5.1.0
-     */
-    Tag[] additionalTagsWithAttributes() default { };
-
-    /**
-     * @return Base URI used to resolve relative URIs to absolute ones. If not set, validation
-     * of HTML containing relative URIs will fail.
-     * @since Hibernate Validator 6.0.0
-     */
-    String baseURI() default "";
 }

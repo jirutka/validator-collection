@@ -58,6 +58,12 @@
     </issueManagement>
 
 
+    <!--//////////////////// PROPERTIES ////////////////////-->
+    <properties>
+        <groovy.version>2.4.15</groovy.version>
+    </properties>
+
+
     <!--//////////////////// DEPENDENCIES ////////////////////-->
 
     <dependencies>
@@ -70,10 +76,10 @@
 
         <!-- JSR-349 Bean Validator -->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <!-- Note: Minimal supported version is 4.3.0.Final. -->
-            <version>5.4.1.Final</version>
+            <version>6.0.4.Final</version>
         </dependency>
 
         <dependency>
@@ -86,7 +92,7 @@
         <dependency>
             <groupId>javax.el</groupId>
             <artifactId>javax.el-api</artifactId>
-            <version>2.2.4</version>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -140,7 +146,8 @@
             <id>test-different-hv-version</id>
 
             <properties>
-                <!-- Should be set from CLI: -Dhv.version.test=VERSION -->
+                <!-- Should be set from CLI: -Dhv.groupId.test=GROUP_ID -Dhv.version.test=VERSION -->
+                <hv.groupId.test></hv.groupId.test>
                 <hv.version.test></hv.version.test>
                 <dependency.directory>${project.build.directory}/dependency</dependency.directory>
             </properties>
@@ -158,7 +165,7 @@
                                     <outputDirectory>${dependency.directory}</outputDirectory>
                                     <artifactItems>
                                         <item>
-                                            <groupId>org.hibernate</groupId>
+                                            <groupId>${hv.groupId.test}</groupId>
                                             <artifactId>hibernate-validator</artifactId>
                                             <version>${hv.version.test}</version>
                                         </item>
@@ -173,6 +180,7 @@
                         <configuration>
                             <classpathDependencyExcludes>
                                 <exclude>org.hibernate:hibernate-validator</exclude>
+                                <exclude>org.hibernate.validator:hibernate-validator</exclude>
                             </classpathDependencyExcludes>
                             <additionalClasspathElements>
                                 <element>${dependency.directory}/hibernate-validator-${hv.version.test}.jar</element>

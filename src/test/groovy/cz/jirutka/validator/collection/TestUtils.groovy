@@ -23,8 +23,7 @@
  */
 package cz.jirutka.validator.collection
 
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory
+import cz.jirutka.validator.collection.internal.AnnotationUtils
 
 import javax.validation.Validation
 
@@ -68,8 +67,7 @@ class TestUtils {
     }
 
     static createAnnotation(Map attributes=[:], Class annotationType) {
-        def desc = AnnotationDescriptor.getInstance(annotationType, attributes)
-        AnnotationFactory.create(desc)
+        AnnotationUtils.createAnnotationInternal(annotationType, attributes)
     }
 
     static createAnnotationString(Class annotationType, Map attributes) {

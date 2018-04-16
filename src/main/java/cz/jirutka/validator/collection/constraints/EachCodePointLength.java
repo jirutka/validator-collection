@@ -24,9 +24,8 @@
 package cz.jirutka.validator.collection.constraints;
 
 import cz.jirutka.validator.collection.CommonEachValidator;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.hibernate.validator.constraints.SafeHtml.Tag;
-import org.hibernate.validator.constraints.SafeHtml.WhiteListType;
+import org.hibernate.validator.constraints.CodePointLength;
+import org.hibernate.validator.constraints.CodePointLength.NormalizationStrategy;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -36,18 +35,18 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.RELAXED;
 
 /**
- * @see SafeHtml
+ * @since Hibernate Validator 6.0.3
+ * @see CodePointLength
  * @see CommonEachValidator
  */
 @Documented
 @Retention(RUNTIME)
-@Target({METHOD, FIELD, ANNOTATION_TYPE})
-@EachConstraint(validateAs = SafeHtml.class)
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
+@EachConstraint(validateAs = CodePointLength.class)
 @Constraint(validatedBy = CommonEachValidator.class)
-public @interface EachSafeHtml {
+public @interface EachCodePointLength {
 
     String message() default "";
 
@@ -55,27 +54,9 @@ public @interface EachSafeHtml {
 
     Class<? extends Payload>[] payload() default { };
 
-    /**
-     * @return The built-in whitelist type which will be applied to the rich text value
-     */
-    WhiteListType whitelistType() default RELAXED;
+    int min() default 0;
 
-    /**
-     * @return Additional whitelist tags which are allowed on top of the tags specified by the
-     * {@link #whitelistType()}.
-     */
-    String[] additionalTags() default { };
+    int max() default Integer.MAX_VALUE;
 
-    /**
-     * @return Allows to specify additional whitelist tags with optional attributes.
-     * @since Hibernate Validator 5.1.0
-     */
-    Tag[] additionalTagsWithAttributes() default { };
-
-    /**
-     * @return Base URI used to resolve relative URIs to absolute ones. If not set, validation
-     * of HTML containing relative URIs will fail.
-     * @since Hibernate Validator 6.0.0
-     */
-    String baseURI() default "";
+    NormalizationStrategy normalizationStrategy() default NormalizationStrategy.NONE;
 }

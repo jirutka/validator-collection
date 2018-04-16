@@ -24,8 +24,6 @@
 package cz.jirutka.validator.collection.internal;
 
 import org.apache.commons.lang3.Validate;
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor;
-import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,11 +138,62 @@ public abstract class AnnotationUtils {
                     "Missing required attribute: %s", m.getName());
         }
 
-        AnnotationDescriptor<T> descriptor = AnnotationDescriptor.getInstance(annotationType, attributes);
-
-        return AnnotationFactory.create(descriptor);
+        return createAnnotationInternal(annotationType, attributes);
     }
 
+    /**
+     * Creates an annotation instance using the respective constructor for each HV version.
+     * This is required to support both version 4.3-5.X and 6.0.0
+     *
+     * @param annotationType The annotation's class.
+     * @param attributes A map with attribute values for the annotation to be created.
+     * @param <T> The type of the annotation.
+     *
+     * @return An instance of the annotation.
+     * @throws IllegalStateException if the required constructor classes or methods are not found.
+     */
+    public static <T extends Annotation> T createAnnotationInternal(Class<T> annotationType,
+            Map<String, Object> attributes) {
+        try {
+            final Object descriptor;
+            final Class<?> annotationDescriptorClass;
+            final Class<?> annotationFactoryClass;
+
+            int version = HibernateValidatorInfo.getVersion();
+            if (version >= 6_0_4) {
+                annotationDescriptorClass =
+                    Class.forName("org.hibernate.validator.internal.util.annotation.AnnotationDescriptor");
+                annotationFactoryClass =
+                    Class.forName("org.hibernate.validator.internal.util.annotation.AnnotationFactory");
+
+                Class<?> annotationDescriptorBuilderClass =
+                    Class.forName("org.hibernate.validator.internal.util.annotation.AnnotationDescriptor$Builder");
+
+                final Object descriptorBuilder = annotationDescriptorBuilderClass
+                    .getConstructor(Class.class, Map.class)
+                    .newInstance(annotationType, attributes);
+
+                descriptor = annotationDescriptorBuilderClass
+                    .getMethod("build")
+                    .invoke(descriptorBuilder);
+            } else {
+                annotationDescriptorClass =
+                    Class.forName("org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor");
+                annotationFactoryClass =
+                    Class.forName("org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory");
+
+                descriptor = annotationDescriptorClass
+                    .getMethod("getInstance", Class.class, Map.class)
+                    .invoke(null, annotationType, attributes);
+            }
+
+            return (T) annotationFactoryClass
+                .getMethod("create", annotationDescriptorClass)
+                .invoke(null, descriptor);
+        } catch (ReflectiveOperationException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
 
     private static Object invokeNonArgMethod(Object object, String methodName) {
         Class<?> clazz = object.getClass();
