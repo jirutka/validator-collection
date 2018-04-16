@@ -100,7 +100,7 @@ class CommonEachValidatorIT extends Specification {
         given:
             constraint = '@EachNotBlank'
         expect:
-            assertViolations values, isValid, invalidIndex, 'must not be empty'
+            assertViolations values, isValid, invalidIndex, 'may not be empty'
         where:
             values        | desc                               || isValid | invalidIndex
             ['']          | 'value invalid by top validator'   || false   | 0

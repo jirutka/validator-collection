@@ -42,15 +42,15 @@ class EachAnnotationIT extends Specification {
 
     // List of @Each* annotations for constraints defined in JSR 303/349.
     static final CONSTRAINTS_JSR = [
-            EachAssertFalse, EachAssertTrue, EachDecimalMax, EachDecimalMin, EachDigits,
-            EachEmail, EachFuture, EachMax, EachMin, EachNotBlank, EachNotNull, EachNull,
-            EachPast, EachPattern, EachSize
+            EachAssertFalse, EachAssertTrue, EachDecimalMax, EachDecimalMin,
+            EachDigits, EachFuture, EachMax, EachMin, EachNotBlank, EachNotNull,
+            EachNull, EachPast, EachPattern, EachSize
     ]
 
     // List of @Each* annotations for Hibernate constraints in HV 4.3.0.
     static final CONSTRAINTS_HV = [
-            EachLength, EachNotBlank, EachNotEmpty, EachRange, EachScriptAssert,
-            EachURL
+            EachEmail, EachLength, EachNotBlank, EachNotEmpty, EachRange,
+            EachScriptAssert, EachURL
     ]
 
     // List of @Each* annotations for Hibernate constraints in HV 5.1.0 and newer.

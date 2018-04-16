@@ -51,7 +51,7 @@ public @interface EachNotEmpty {
 
     String message() default "{org.hibernate.validator.constraints.NotEmpty.message}";
 
-    Class<?>[] groups() default {};
+    Class<?>[] groups() default { };
 
-    Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default { };
 }
