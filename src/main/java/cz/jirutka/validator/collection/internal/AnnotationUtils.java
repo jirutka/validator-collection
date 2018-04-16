@@ -160,7 +160,7 @@ public abstract class AnnotationUtils {
             final Class<?> annotationFactoryClass;
 
             int version = HibernateValidatorInfo.getVersion();
-            if (version >= 6_0_0) {
+            if (version >= 6_0_4) {
                 annotationDescriptorClass =
                     Class.forName("org.hibernate.validator.internal.util.annotation.AnnotationDescriptor");
                 annotationFactoryClass =

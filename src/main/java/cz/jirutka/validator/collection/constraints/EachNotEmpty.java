@@ -27,6 +27,7 @@ import cz.jirutka.validator.collection.CommonEachValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
+import javax.validation.ReportAsSingleViolation;
 import javax.validation.constraints.NotEmpty;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -42,8 +43,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
-@EachConstraint(validateAs = NotEmpty.class)
-@Constraint(validatedBy = CommonEachValidator.class)
+@EachNotNull
+@EachSize(min = 1)
+@ReportAsSingleViolation
+@Constraint(validatedBy = { })
 public @interface EachNotEmpty {
 
     String message() default "{org.hibernate.validator.constraints.NotEmpty.message}";
